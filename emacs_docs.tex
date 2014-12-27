@@ -1,0 +1,2232 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=blue,
+    filecolor=blue,
+    linkcolor=blue,
+    urlcolor=red
+}
+\usepackage{url}
+% verbatim small
+\makeatletter
+\g@addto@macro\@verbatim\footnotesize
+%\renewcommand{\l@section}{\@dottedtocline{1}{1.5em}{2.6em}}
+\renewcommand{\l@subsection}{\@dottedtocline{2}{1.5em}{3.0em}}
+\renewcommand{\l@subsubsection}{\@dottedtocline{3}{4.4em}{4.0em}}
+\makeatother
+
+\title{Tutorial Emacs}
+\author{@sopier\footnote{http://twitter.com/sopier}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\pagebreak
+
+\section{Pendahuluan}
+Dari sekian banyak aplikasi penyunting teks 'jadul' di keluarga
+Unix adalah \verb=emacs=. Sama halnya dengan \verb=Vim=, penyunting
+teks satu ini juga memiliki penggemar tersendiri, yang kadang
+karena kefanatikannya sampai terjadi \emph{war} antara \verb=emacs=
+vs \verb=Vim=. Pertanyaan yang sering muncul adalah ``apakah
+\verb=emacs= dapat melakukan ini, apakah \verb=Vim= memiliki fitur
+ini?`` Dalam artikel ini, penulis tidak mau terjebak dalam 
+\emph{war} tersebut, melainkan sekedar menuliskan pengalaman 
+menggunakan \verb=emacs=, dari kacamata seorang awam.
+
+Salah satu alasan saya belajar \verb=emacs= adalah kenyataan
+bahwa beberapa \emph{key bindings} pada program di *Nix 
+menggunakan \verb=emacs=, sebagai contoh \verb=Bash=. Untuk
+melakukan navigasi perintah pada \verb=Bash=, 
+\emph{default key bindings} yang digunakan adalah \verb=emacs=.
+
+Sebagai contoh, Anda memiliki perintah seperti berikut:
+
+\begin{verbatim}
+$ ssh -i key.pem -D 9999 ubuntu@someserver.com
+\end{verbatim}
+
+Anda dapat menyunting perintah di atas dengan menggunakan
+navigasi seperti pada \verb=emacs=, misal:
+
+\begin{verbatim}
+|----------+----------------------------|
+| Perintah | Keterangan                 |
+|----------+----------------------------|
+| M-f      | Menuju ke kata selanjutnya |
+| M-4 M-f  | Maju 4 kata                |
+| C-a      | Menuju ke awal baris       |
+| C-e      | Menuju ke akhir baris      |
+|----------+----------------------------|
+\end{verbatim}
+
+Atau perintah \verb=C-r= untuk melihat \emph{history} perintah
+pada \verb=Bash=, di mana perintah ini kalau di \verb=emacs=
+digunakan untuk pencarian ke belakang (\emph{backward-search}),
+hampir sama bukan?
+
+Itu hanya contoh kecil saja, karena saya sering bekerja dengan
+\verb=terminal=, maka menguasai dasar-dasar navigasi dalam
+\verb=emacs= berguna untuk menyunting perintah secara cepat.
+
+Sekali lagi, tulisan ini bukanlah sebuah tutorial lengkap 
+program \verb=emacs=, melainkan sekedar catatan pribadi penulis
+yang coba dituangkan kedalam sebuah berkas elektronik dengan 
+tujuan agar lebih mudah disebarluaskan kepada siapa saja yang
+membutuhkan. Semoga bermanfaat...
+
+\subsection{Tentang Emacs}
+
+\emph{GNU Emacs is an extensible, customizable text editor - and more.}\footnote{http://www.gnu.org/software/emacs/}
+
+\verb=Emacs= termasuk dalam keluarga aplikasi penyunting teks,
+namun memiliki kelebihan dari sisi \emph{extensibility}. Tidaklah
+heran beberapa kalangan menyebut \verb=emacs= sebagai sebuah sistem
+operasi, karena selain menyunting teks, dengan \verb=emacs=, Anda dapat
+membaca \emph{email}, menjelajah \emph{website}, dan memainkan 
+beberapa aplikasi permainan sederhana, \emph{FTP client}, \emph{news reader},
+dan masih banyak lagi. Anda pun dapat membuat versi \verb=emacs= Anda sendiri,
+selama Anda memahami bagaimana cara melakukan pengembangan pada \verb=emacs=.
+
+Pengembangan aplikasi ini dimulai pada pertengahan 1970-an, dan 
+masih aktif sampai saat tutorial ini ditulis (2013). \verb=Emacs=
+memiliki lebih dari 2.000 perintah \emph{built-in} yang dapat
+digunakan untuk membuat \emph{macro} untuk membuat pekerjaan
+menjadi otomatis.
+
+\verb=Emacs= dibuat menggunakan \verb=emacs lisp=, sebuah
+\emph{variant} dari bahasa \verb=Lisp=.
+
+Versi pertama dari \verb=emacs= ditulis oleh Richard Stallman dan
+Guy L. Steele pada tahun 1976.
+
+\verb=Emacs= sendiri memiliki banyak \emph{variant}, dan saat ini
+\emph{variant} yang paling banyak dipakai adalah \verb=GNU Emacs=
+yang dibuat oleh Stallman untuk \emph{GNU Project}.
+
+\section{Bekerja dengan Berkas}
+Berikut perintah ketika bekerja dengan berkas:
+
+\begin{verbatim}
+|----------+--------------------------------------------------|
+| Perintah | Keterangan                                       |
+|----------+--------------------------------------------------|
+| C-x C-f  | Membuka berkas                                   |
+| C-x C-s  | Menyimpan berkas                                 |
+| C-x s    | Menyimpan semua berkas yang sedang disunting     |
+| C-x i    | Memasukkan teks dari berkas lain ke dalam berkas |
+|          | yang sedang disunting                            |
+| C-x C-v  | Mengganti berkas yang sedang disunting dengan    |
+|          | berkas lain                                      |
+| C-x C-w  | Menyimpan buffer ke dalam berkas lain            |
+| C-x C-q  | Mengubah ke mode read-only                       |
+| C-x C-k  | Menutup berkas                                   |
+|----------+--------------------------------------------------|
+\end{verbatim}
+
+\section{Dasar-dasar Navigasi}
+Sebelum masuk ke pembahasan mengenai navigasi, mari kita
+pelajari terlebih dahulu apa yang dimaksud dengan karakter
+\verb=Control= dan karakter \verb=Meta= pada \verb=emacs=.
+
+Penting juga untuk diketahui penggunaan istilah \emph{point} yang tidak 
+lain adalah \emph{cursor} (kursor) atau posisi letak \emph{mouse} Anda dalam
+dokumen.
+
+\subsection{Karakter Control dan Meta}
+Program penyunting teks \verb=emacs= akan sering sekali
+melibatkan dua tombol pada \emph{keyboard}, yakni tombol
+\verb=Ctrl= dan tombol \verb=Meta=. Untuk tombol \verb=Ctrl=
+(sering disingkat dengan \verb=C=), saya yakin semua sudah
+mengetahui, lalu di mana letak tombol \verb=Meta (M)=?
+
+Saya menggunakan sistem operasi \verb=Ubuntu= dan tombol
+\verb=Meta= secara otomatis di-\emph{assign} pada tombol
+\verb=Alt=.
+
+Ketika Anda bekerja dengan \verb=emacs= dalam mode \emph{GUI},
+penggunaan tombol \verb=Alt= sebagai karakter \verb=Meta= 
+tidak menjadi masalah. Namun ketika Anda bekerja dengan mode
+\emph{command line} (\verb=emacs -nw=) menggunakan program 
+\verb=gnome-terminal=, hal ini akan menjadi masalah, karena 
+begitu Anda tekan tombol \verb=Alt=, 
+otomatis \verb=gnome-terminal= akan mengaktifkan \emph{menu access}.
+
+Solusinya adalah dengan mengubah pengaturan pada 
+\verb=gnome-terminal= dengan cara:
+
+\begin{verbatim}
+Edit->Keyboard Shortcuts->Hilangkan centang pada "Enable menu access keys"
+\end{verbatim}
+
+\subsection{Navigasi}
+
+Sama seperti \verb=Vim=, pengguna \verb=emacs= akan
+merasakan manfaat yang lebih besar ketika meminimalkan
+penggunakan perangkat \emph{mouse} mereka. Untuk itu mari kita
+belajar melakukan navigasi pada \verb=emacs= menggunakan
+perangkat \emph{keyboard}.
+
+Berikut ini beberapa perintah navigasi dasar pada \verb=emacs=:
+
+\begin{verbatim}
+|----------+------------------------------------------------|
+| Perintah | Keterangan                                     |
+|----------+------------------------------------------------|
+| C-f      | Bergerak maju 1 karakter                       |
+| C-b      | Bergerak mundur 1 karakter                     |
+| M-f      | Bergerak maju 1 kata                           |
+| M-b      | Bergerak mundur 1 kata                         |
+| C-a      | Bergerak ke awal baris                         |
+| C-e      | Bergerak ke akhir baris                        |
+| C-n      | Bergerak ke baris selanjutnya (bawah)          |
+| C-p      | Bergerak ke baris sebelumnya (atas)            |
+| C-v      | Menggulung layar ke bawah                      |
+| M-v      | Menggulung layar ke atas                       |
+| C-l      | Menempatkan point tepat di tengah layar        |
+| M-<      | Menuju ke awal (top) buffer                    |
+| M->      | Menuju ke akhir (bottom) buffer                |
+| M-a      | Menuju ke awal kalimat                         |
+| M-e      | Menuju ke akhir kalimat                        |
+| C-m      | Membuat baris baru tepat di bawah posisi point |
+| C-o      | Membuat baris baru tepat di atas posisi point  |
+| C-j      | Membuat baris baru dan indent                  |
+|----------+------------------------------------------------|
+\end{verbatim}
+
+Selain, perintah di atas, salah satu favorit saya untuk melakukan navigasi 
+adalah dengan memanfaatkan \emph{search}. \verb=Emacs= memiliki dua 
+macam \emph{search}, yakni \emph{incremental search} dan 
+\emph{non-incremental search}. Masing-masing terbagi lagi
+menjadi dua, yakni \emph{forward-search} dan \emph{backward-search}.
+
+Berikut perintah untuk melakukan \emph{search}:
+
+\begin{verbatim}
+|-------------------------------+---------------------------------|
+| Perintah                      | Keterangan                      |
+|-------------------------------+---------------------------------|
+| C-s <character/word> <RETURN> | forward incremental search      |
+| C-r <character/word> <RETURN> | backward incremental search     |
+| C-s <RETURN> <character/word> | forward non-incremental search  |
+| C-r <RETURN> <character/word> | backward non-incremental search |
+|-------------------------------+---------------------------------|
+\end{verbatim}
+
+Berikut contoh untuk melakukan navigasi secara cepat menggunakan fitur
+\emph{incremental search}:
+
+\begin{verbatim}
+emacs adalah program penyunting teks yang handal.
+\end{verbatim}
+
+Letakkan \emph{point} pada awal kalimat di atas dengan menekan \verb=C-a=, 
+kemudian tekan \verb=C-s=, untuk menuju ke huruf \verb=t= pada kata 
+\verb=teks=, gunakan perintah \verb=C-s t C-s= kemudian tekan \verb=enter=. 
+Untuk menuju ke karakter \verb=t= berikutnya, cukup tekan \verb=C-s=
+berulang-ulang.
+
+Dan berikut contoh untuk \emph{backward incremental search}, mari kita
+asumsikan \emph{point} berada pada akhir baris, untuk menuju ke huruf 
+\verb=e= pada kata \verb=teks=, cukup tekan \verb=C-r e=, kemudian tekan 
+\verb=enter=.
+
+Dengan menguasai hal ini saja, penulis yakin kecepatan Anda dalam menyunting 
+teks akan meningkat drastis (dibandingkan dengan harus menggunakan 
+\emph{mouse}).
+
+\subsection{Numeric argument}
+\emph{Numeric argument} pada \verb=emacs= merupakan salah satu fitur
+untuk meningkatkan efisiensi pekerjaan. Dengan fitur ini, kita dapat 
+mengulang seberapa banyak sebuah perintah untuk dijalankan. Berikut 
+beberapa contoh penggunaan \emph{numeric argument} pada \verb=emacs=.
+
+\begin{verbatim}
+|-----------+----------------------------------------|
+| Perintah  | Keterangan                             |
+|-----------+----------------------------------------|
+| C-u 8 C-f | Bergerak 8 karakter ke kanan           |
+| C-u 8 C-n | Bergerak 8 baris ke bawah              |
+| C-u 8 *   | Mengetik tanda bintang sebanyak 8 kali |
+|-----------+----------------------------------------|
+\end{verbatim}
+
+\section{Dasar-dasar Penyuntingan Teks}
+
+Untuk memulai pengetikan, Anda tinggal menekan tombol-tombol yang ada pada
+\emph{keyboard} Anda. Satu hal yang perlu ditekankan di sini, apabila Anda 
+ingin mengetik secara efektif dan efisien, ada 2 syarat penting, yakni pertama 
+tinggalkan penggunaan perangkat \emph{mouse} Anda, dan sebisa mungkin hindari 
+penggunaan tombol panah untuk melakukan navigasi.
+
+\subsection{Menyorot Teks}
+Melakukan seleksi (sorot) pada \verb=emacs= cukup dengan menekan tombol:
+
+\begin{verbatim}
+|-----------+------------------------------------|
+| Perintah  | Keterangan                         |
+|-----------+------------------------------------|
+| C-<Space> | Mark Set (mengaktifkan mode sorot) |
+|-----------+------------------------------------|
+\end{verbatim}
+
+Kemudian diikuti dengan \emph{motion} untuk menandai daerah yang akan disorot.
+Misal untuk menyorot sebuah baris:
+
+\begin{verbatim}
+|-----------+-----------------------|
+| Perintah  | Keterangan            |
+|-----------+-----------------------|
+| C-a       | Menuju ke awal baris  |
+| C-<Space> | Mulai sorot           |
+| C-e       | Menuju ke akhir baris |
+|-----------+-----------------------|
+\end{verbatim}
+
+\subsection{Menghapus Teks}
+
+Berikut kombinasi perintah untuk melakukan penghapusan teks dalam \verb=emacs=:
+
+\begin{verbatim}
+|---------------+--------------------------------------------------|
+| Perintah      | Keterangan                                       |
+|---------------+--------------------------------------------------|
+| <Backspace>   | Menghapus 1 karakter sebelum point               |
+| C-d           | Menghapus 1 karakter di atas point               |
+| M-<Backspace> | Menghapus 1 kata sebelum point                   |
+| M-d           | Menghapus 1 kata setelah point                   |
+| C-k           | Menghapus dari posisi point sampai akhir baris   |
+| M-k           | Menghapus dari posisi point sampai akhir kalimat |
+|---------------+--------------------------------------------------|
+\end{verbatim}
+
+Anda juga dapat menggabungkan perintah penghapusan ini dengan fitur
+\emph{numeric argument}, misal untuk menghapus 2 baris, gunakan perintah 
+berikut:
+
+\begin{verbatim}
+|-----------+----------------------------|
+| Perintah  | Keterangan                 |
+|-----------+----------------------------|
+| C-a       | Menuju ke awal baris       |
+| C-u 2 C-k | Menghapus 2 baris ke bawah |
+|-----------+----------------------------|
+\end{verbatim}
+
+\subsection{Killing and Yanking}
+\verb=Emacs= menggunakan istilah \emph{killing} untuk \emph{cutting}, dan
+\emph{yanking} untuk \emph{pasting}. \emph{Killing} memindahkan teks dari
+\emph{buffer} ke bagian paling atas dari \emph{kill ring} (\emph{clipboard}).
+\emph{kill ring} ini sendiri mampu menampung sampai 60 buah \emph{killed items}.
+
+Anda dapat memanggil \emph{kill ring} ini menggunakan perintah \verb=M-y=, 
+tekan lagi untuk memanggil \emph{kill items} sebelumnya, dan seterusnya.
+
+Berikut cara untuk berinteraksi dengan \emph{kill ring}:
+
+\begin{verbatim}
+|----------+-----------------------------------|
+| Perintah | Keterangan                        |
+|----------+-----------------------------------|
+| C-w      | Killing                           |
+| C-y      | Yanking                           |
+| M-y      | Memanggil yank sebelumnya         |
+| M-y      | Memanggil yank sebelumnya, dst... |
+|----------+-----------------------------------|
+\end{verbatim}
+
+Membingungkan? Tenang ... Itu hanya karena belum terbiasa saja ... :)
+
+\subsection{Salin dan Tempel}
+
+Perintah untuk menyalin teks dalam \verb=emacs=:
+
+\begin{verbatim}
+|----------+----------------------|
+| Perintah | Keterangan           |
+|----------+----------------------|
+| M-w      | Menyalin (copy) teks |
+| C-y      | Paste (yank) teks    |
+|----------+----------------------|
+\end{verbatim}
+
+Berikut ini contoh perintah untuk salin baris:
+
+\begin{verbatim}
+|----------+--------------------|
+| Perintah | Keterangan         |
+|----------+--------------------|
+| C-a      | Menuju awal baris  |
+| C-k      | Hapus baris        |
+| C-y      | Tempel baris       |
+| C-m      | Membuat baris baru |
+| C-y      | Tempel lagi        |
+|----------+--------------------|
+\end{verbatim}
+
+\subsection{Salin Tempel Seleksi}
+
+\begin{verbatim}
+|-----------------------+---------------------|
+| Perintah              | Keterangan          |
+|-----------------------+---------------------|
+| C-<Space>             | Start the selection |
+| C-p / C-n / C-f / C-b | Memilih area        |
+| C-w                   | Cut                 |
+| M-w                   | Copy                |
+| C-y                   | Paste               |
+|-----------------------+---------------------|
+\end{verbatim}
+
+\subsection{Memotong (Cut) Teks}
+
+Perintah untuk memotong teks dalam \verb=emacs=:
+
+\begin{verbatim}
+|----------+-------------------------|
+| Perintah | Keterangan              |
+|----------+-------------------------|
+| C-w      | Memotong (cut) teks     |
+| C-y      | Menempel (paste) (yank) |
+|----------+-------------------------|
+\end{verbatim}
+
+\section{Mengakses Bantuan (Help)}
+Ini adalah fitur yang \textbf{wajib} dikuasai oleh setiap pengguna 
+\verb=Emasc=, kenapa? Karena otak kita tidak mungkin untuk mengingat
+semua kombinasi tombol perintah yang ada pada \verb=Emacs=.
+
+Berikut ini beberapa tips yang penulis pakai untuk mengakses menu bantuan
+(\emph{help}) untuk menemukan informasi yang kita inginkan.
+
+Tekan \verb=C-h a= (\verb=a= untuk \verb=apropos=) untuk memunculkan 
+menu bantuan, kemudian ketik \emph{keyword} yang ingin kita cari, 
+misalkan saya ingin mengetahui bagaimana cara membuka daftar 
+\emph{buffers} yang aktif, saya ketikkan saja \emph{buffers list}, 
+kemudian \verb=emacs= merespon dengan informasi yang [mungkin] terkait 
+dengan \emph{keyword buffers list}. Selanjutnya tinggal kita pilih dan
+buka informasi mana yang mungkin relevan.
+
+Contoh kedua adalah mencari tahu kombinasi tombol pada \verb=emacs= untuk
+melakukan suatu pekerjaan. Misalkan saya ingin mencari kombinasi tombol untuk
+menggulung layar pada \emph{window} lain. Ketikkan saja \verb=C-h b=,
+\verb=b= di sini singkatan dari \emph{bindings}, ketik 
+\emph{keyword scroll other}, tekan \verb=Enter=, dan muncullah informasi
+yang mungkin terkait dengan apa yang kita cari, untuk lebih cepat menemukan
+tinggal kita gunakan saja fungsi \emph{search} (\verb=C-s=) diikuti dengan
+kata yang ingin dicari.
+
+Dan tentunya masih banyak lagi contoh lain, yang jelas fitur bantuan yang 
+sangat lengkap ini tentu saja memudahkan bagi siapa saja (baik yang sudah
+mahir atau pun masih pemula) untuk mengatasi permasalahan yang dihadapi
+ketika bekerja dengan \verb=Emacs=, tanpa harus melakukan jelajah ke 
+dunia maya.
+
+\section{Buffers}
+\verb=Emacs= memiliki 2 jenis \emph{buffer}, yang terkait dengan berkas dan
+yang tidak terkait dengan berkas.
+
+\begin{verbatim}
+|----------+------------------------------------------------|
+| Perintah | Keterangan                                     |
+|----------+------------------------------------------------|
+| C-x C-f  | Membuka buffer berkas                          |
+| C-x C-c  | Menutup emacs                                  |
+| C-x k    | Menutup (kill) berkas (buffer)                 |
+| C-x C-s  | Menyimpan berkas                               |
+| C-x C-w  | Menyimpan buffer sebagai berkas baru (save as) |
+|----------+------------------------------------------------|
+\end{verbatim}
+
+Berikut ini beberapa perintah untuk bekerja dengan \emph{buffer} pada 
+\verb=emacs=:
+
+\begin{verbatim}
+|-------------------+--------------------------------------------------|
+| Perintah          | Keterangan                                       |
+|-------------------+--------------------------------------------------|
+| C-x <Panah Kanan> | Berpindah ke buffer berikutnya                   |
+| C-x <Panah Kiri>  | Berpindah ke buffer sebelumnya                   |
+| C-x b             | Berpindah ke named buffer                        |
+| C-x C-b           | Membuka named buffer dalam mode horizontal split |
+| C-x C-b           | Daftar buffer yang aktif                         |
+| C-x 1             | Kembali ke buffer aktif                          |
+| C-x s             | Menyimpan perubahan di semua buffer              |
+|-------------------+--------------------------------------------------|
+\end{verbatim}
+
+Ada dua perintah untuk menyimpan berkas, yang pertama menggunakan
+\verb=C-x C-s=, di mana perintah ini akan menyimpan perubahan hanya pada 
+\emph{buffer} yang aktif, dan perintah kedua adalah \verb=C-x s=, yang mana 
+akan menyimpan semua perubahan yang ada pada semua \emph{buffer} berkas
+yang sedang kita sunting. Perintah kedua ini akan diikuti dengan
+\emph{confirmation} apakah kita akan menyimpan perubahan tersebut pada setiap 
+\emph{buffer}-nya.
+
+\subsection{ido-mode}
+Selain menggunakan \emph{default buffer}, \verb=emacs= juga menyediakan beberapa
+\emph{mode} untuk bekerja dengan \emph{buffer} secara lebih efisien. Keduanya 
+adalah \verb=iswitchb-mode= dan \verb=ido-mode=.
+
+Keduanya memiliki cara kerja yang sama, namun untuk \verb=emacs 22+=, lebih 
+disarankan menggunakan \verb=ido-mode=. Pertanyaan selanjutnya apa beda 
+antara \verb=ido-mode= dengan sistem \emph{buffer} bawaan?
+
+Salah satu hal yang mendasar adalah dengan menekan \verb=C-x b=, pada 
+\verb=ido-mode= Anda dapat melihat semua daftar \emph{buffer} yang tersedia,
+sedangkan jika menggunakan \emph{buffer} bawaan, menekan \verb=C-x b=, Anda 
+tidak dapat melihat daftar \emph{buffer}.
+
+Berikut perintah untuk \verb=ido-mode=:
+
+\begin{verbatim}
+|--------------+------------------------------------------|
+| Perintah     | Keterangan                               |
+|--------------+------------------------------------------|
+| M-x ido-mode | mengaktifkan ido-mode                    |
+| C-x b        | melihat daftar buffer                    |
+| C-s          | berpindah (rotate) antar buffer forward  |
+| C-r          | berpindah (rotate) antar buffer backward |
+| C-x k        | kill buffer                              |
+|--------------+------------------------------------------|
+\end{verbatim}
+
+\verb=ido-mode= (singkatan dari \emph{interactive-do}) juga mendukung 
+\emph{auto-completion} dengan mengetikkan beberapa karakter kemudian tekan 
+\verb=TAB=. Anda dapat membuat \emph{buffer} baru dengan mengetikkan 
+nama \emph{buffer}, kemudian tekan \verb=ENTER= dua kali.
+
+Apabila Anda ingin selalu menggunakan \verb=ido-mode= setiap kali \verb=emacs= 
+dijalankan, tambahkan baris berikut pada berkas \verb=~/.emacs= Anda:
+
+\begin{verbatim}
+(ido-mode t) ; set ido-mode true
+\end{verbatim}
+
+\subsection{transient-mark-mode}
+Mulai dari \verb=emacs 23+=, \emph{transient-mark-mode} diaktifkan secara 
+\emph{default}. Anda dapat menonaktifkan \emph{mode} ini dengan menekan:
+
+\begin{verbatim}
+|----------+---------------------|
+| Perintah | Keterangan          |
+|----------+---------------------|
+| M-x      | transient-mark-mode |
+|----------+---------------------|
+\end{verbatim}
+
+Apa keuntungan kita men-\emph{disabled mode} ini? Salah satunya adalah untuk
+keperluan \emph{bookmarking}, sebagai contoh Anda sekarang berada pada baris
+ke-200, kemudian Anda tekan \verb=M-g g 100= untuk lompat ke baris 100. 
+Setelah selesai melakukan penyuntingan pada baris ke-100, Anda dapat lompat
+kembali ke baris ke-200 dengan hanya menekan \verb=C-x C-x=.
+
+Pertanyaan selanjutnya adalah apakah sebaiknya \emph{transient-mark-mode}
+di-\emph{enable} atau di-\emph{disabled}? Itu semua kembali pada Anda, jika
+Anda sering melakukan \emph{copying}, \emph{killing}, dan \emph{yanking}, maka
+sebaiknya \emph{transient-mark-mode} diaktifkan. Namun jika Anda sering 
+lompat-lompat antar baris, sebaiknya di non-aktifkan, tergantung selera ... 
+
+\subsection{*scratch* buffers}
+Setiap kali Anda membuka \verb=emacs=, ada beberapa \emph{buffers} yang secara
+otomatis dibuka oleh \verb=emacs= (dinamakan juga \verb=emacs= \emph{buffer}).
+Kalau Anda membuka \emph{buffer} lagi, maka itu dinamakan sebagai 
+\emph{user buffers}.
+
+Salah satu \verb=emacs= \emph{buffer} adalah \verb=*scratch*=, yang sesuai
+dengan namanya, ini adalah tempat di mana Anda dapat melakukan corat-coret
+terkait dengan apa yang sedang Anda kerjakan. 
+
+Selain itu, penulis sering memanfaatkan \emph{buffer} ini sebagai 
+\emph{command-mode}-nya \verb=emacs=. Kenapa? Karena ketika saya sedang di
+depan komputer, kadang ada gangguan internal (baca: anak minta ikut coding),
+sementara kita tidak ingin pekerjaan teracak-acak olehnya. Dengan menggunakan
+\verb=*scratch*= \emph{buffer} ini, kita tidak perlu lagi khawatir pekerjaan
+jadi kacau balau karenanya.
+
+Anda pun dapat menjadikan \verb=*scratch*= \emph{buffer} ini sebagai media
+untuk belajar bahasa pemrograman \verb=Lisp=, berikut ini contoh operasi
+aritmatika sederhana:
+
+\begin{verbatim}
+(+ 5 3)
+\end{verbatim}
+
+Tekan \verb=C-j=, maka \verb=emacs= akan mengevaluasi baris tersebut dan 
+memberikan hasilnya tepat di garis setelahnya.
+
+\begin{verbatim}
+(+ 5 3)
+8
+\end{verbatim}
+
+\section{Bookmarks}
+Sesuai dengan namanya, \emph{bookmarks} memungkinkan kita untuk menyimpan
+posisi \emph{point} dalam berkas. \emph{Bookmarks} ditandai dengan sebuah nama
+yang akan disimpan selama \emph{sessions} \verb=emacs= masih berjalan. Bahkan
+ketika isi dari berkas berubah, \emph{bookmark} masih dapat bekerja dengan baik.
+Hal ini dikarekanakan \emph{bookmarks} tidak hanya menyimpan posisi \emph{point}
+namun juga menyimpan teks apa saja yang ada di sekitar \emph{point}. Namun jika
+berkas sudah banyak berubah, mungkin saja \emph{bookmarks} tidak akan bekerja
+lagi.
+
+Berikut ini perintah-perintah terkait dengan \emph{bookmarks}:
+
+\begin{verbatim}
+|------------------------+-----------------------------------------|
+| Perintah               | Keterangan                              |
+|------------------------+-----------------------------------------|
+| C-x r m BOOKMARK <RET> | menyimpan bookmark dengan nama BOOKMARK |
+| C-x r b BOOKMARK <RET> | memanggil bookmark dengan nama BOOKMARK |
+| C-x r l                | melihat daftar bookmark                 |
+| M-x bookmark-save      | menyimpan bookmark ke dalam berkas      |
+| M-x edit-bookmarks     | menyunting bookmark                     |
+|------------------------+-----------------------------------------|
+\end{verbatim}
+
+\section{Registers}
+Fitur \emph{register} dapat menyimpan teks yang Anda salin, untuk kemudian 
+Anda tempel di mana pun Anda inginkan (tanpa harus mencari pada \emph{ring}).
+Caranya adalah dengan menyimpan teks dalam \emph{register} yang dapat Anda
+panggil setiap Anda butuhkan. 
+
+Berikut cara untuk bekerja dengan \emph{registers}
+
+\begin{verbatim}
+|---------------------------------+--------------------------------------|
+| Perintah                        | Keterangan                           |
+|---------------------------------+--------------------------------------|
+| C-x r s k                       | copy region ke dalam register r      |
+|                                 | (copy-to-register)                   |
+| C-x r i k                       | panggil register k (insert-register) |
+| M-x append-to-register <RET> k  | tambahkan (append) region ke dalam   |
+|                                 | register k                           |
+| M-x prepend-to-register <RET> k | prepend region ke dalam register k   |
+|---------------------------------+--------------------------------------|
+\end{verbatim}
+
+\section{Search and Replace}
+Salah satu fungsi penting sebuah program penyunting teks adalah fungsi cari
+dan ganti (\emph{search and replace}). Pada bagian ini kita akan mempelajari
+bagaimana \verb=emacs= melakukan fungsi tersebut.
+
+Pencarian pada \verb=emacs= dapat dibagi menjadi dua, pencarian maju dan 
+pencarian mundur. Pencarian maju lakukan dengan menekan:
+
+\begin{verbatim}
+|----------+-----------------------------------|
+| Perintah | Keterangan                        |
+|----------+-----------------------------------|
+| C-s      | Mengaktifkan mode search maju     |
+| C-s      | Mencari next occurence (jika ada) |
+| Enter    | Keluar dari search mode           |
+|----------+-----------------------------------|
+\end{verbatim}
+
+Pencarian mundur:
+
+\begin{verbatim}
+|----------+---------------------------------------|
+| Perintah | Keterangan                            |
+|----------+---------------------------------------|
+| C-r      | Mengaktifkan mode search mundur       |
+| C-r      | Mencari previous occurence (jika ada) |
+| Enter    | Keluar dari search mode               |
+|----------+---------------------------------------|
+\end{verbatim}
+
+Untuk mencari \emph{previous occurence} pada pencarian mundur dapat juga
+dengan menekan tombol \verb=Backspace=.
+
+Anda dapat juga mengubah mode pencarian maju ke mundur (atau sebaliknya)
+dengan menekan \verb=C-s= atau \verb=C-r=.
+
+\subsection{Replace String}
+
+Cara pertama adalah menggunakan \emph{eXtended Command} yang dapat diakses
+menggunakan \verb=M-x=. Sebagai contoh kita memiliki kalimat berikut:
+
+\begin{verbatim}
+Ini ibu budi
+\end{verbatim}
+
+Untuk mengganti kata \verb=ibu= menjadi \verb=bapak=, berikut perintah yang
+harus dilakukan:
+
+\begin{verbatim}
+|--------------------------------------------------+--------------------------|
+| Perintah                                         | Keterangan               |
+|--------------------------------------------------+--------------------------|
+| C-a                                              | Menuju ke awal baris     |
+| C-<SPC>                                          | Mark Set                 |
+| C-e                                              | Sorot sampai akhir baris |
+| M-x repl<Tab>s<Tab><Enter>ibu<Enter>bapak<Enter> |                          |
+|--------------------------------------------------+--------------------------|
+\end{verbatim}
+
+Cara kedua adalah dengan menggunakan perintah \verb=replace-string=.
+Caranya adalah dengan menyorot daerah yang mengandung kata yang akan diganti
+kemudian tekan \verb=M-x replace-string= tekan \verb=enter=, masukkan kata
+yang ingin diganti, tekan \verb=enter= lagi, kemudian masukkan kata yang
+pengganti.
+
+\begin{verbatim}
+|---------------------------+------------------------------------|
+| Perintah                  | Keterangan                         |
+|---------------------------+------------------------------------|
+| C-space                   | Mulai menyorot                     |
+| Motion                    | Tandai daerah yang mengandung kata |
+| M-x replace-string        |                                    |
+| Enter                     |                                    |
+| Masukkan kata yang dicari |                                    |
+| Enter                     |                                    |
+| Masukkan kata pengganti   |                                    |
+| Enter                     |                                    |
+|---------------------------+------------------------------------|
+\end{verbatim}
+
+\subsection{Query Replace}
+Fitur ini akan mengganti setiap perulangan kata yang dicari pada seluruh dokumen
+namun dengan proses konfirmasi sebelumnya. Berikut ini perintahnya:
+
+\begin{verbatim}
+|----------------------------------------------------------------+------------|
+| Perintah                                                       | Keterangan |
+|----------------------------------------------------------------+------------|
+| M-x query-replace <teks awal> <Enter> <teks pengganti> <Enter> |            |
+| atau                                                           |            |
+| M-% <teks awal> <Enter> <teks pengganti> <Enter>               |            |
+|----------------------------------------------------------------+------------|
+\end{verbatim}
+
+Misal:
+
+\begin{verbatim}
+Saya seorang programmer
+\end{verbatim}
+
+Anda ingin mengganti kata \verb=programmer= menjadi \verb=coder=:
+
+\begin{verbatim}
+|----------------------------------------------------------------|
+| Perintah                                                       |
+|----------------------------------------------------------------|
+| C-a                                                            |
+| M-x query-replace <Enter> <programmer> <Enter> <coder> <Enter> |
+|----------------------------------------------------------------|
+\end{verbatim}
+
+\section{Modes}
+\verb=emacs= memiliki banyak \emph{mode}, berikut ini beberapa \emph{mode} yang sering
+penulis pakai:
+
+\subsection{Dired-Mode}
+Untuk melakukan pekerjaan manipulasi berkas atau direktori, \verb=emacs=
+menyediakan sebuah \emph{mode} bernama \verb=Dired mode=. Sesuai dengan namanya,
+\emph{Dired} (\emph{directory editor}) mempermudah kita dalam melakukan manipulasi berkas 
+atau direktori dengan mudahnya.
+
+Untuk berpindah ke \verb=dired mode=, kita dapat mengetik:
+
+\begin{verbatim}
+|-----------+---------------------------|
+| Perintah  | Keterangan                |
+|-----------+---------------------------|
+| C-x d     | aktifkan dired mode, atau |
+| M-x dired | aktifkan dired mode       |
+|-----------+---------------------------|
+\end{verbatim}
+
+Dari sini, Anda dapat melakukan manipulasi berkas dan direktori, seperti 
+misalnya untuk menghapus sebuah berkas, tekan \verb=D= dan seterusnya ...
+
+Berikut beberapa perintah terkait dengan \emph{dired mode}
+
+\begin{verbatim}
+|----------+-----------------------------------------------------------|
+| Perintah | Keterangan                                                |
+|----------+-----------------------------------------------------------|
+| <RETURN> | membuka berkas                                            |
+| q        | menutup direktori                                         |
+| C        | menyalin berkas                                           |
+| R        | mengubah (move) nama berkas                               |
+| D        | menghapus berkas                                          |
+| +        | membuat direktori baru                                    |
+| Z        | compress / decompress berkas menggunakan gzip             |
+| m        | memberi tanda pada berkas                                 |
+| u        | menghilangkan tanda pada berkas                           |
+| U        | menghilangkan tanda pada semua berkas yang sudah ditandai |
+| % m      | memberi tanda menggunakan regex                           |
+| g        | refresh direktori                                         |
+| ^        | kembali ke direktori atasnya                              |
+| w        | menyalin nama berkas                                      |
+| 0w       | menyalin full path dan nama berkas                        |
+|----------+-----------------------------------------------------------|
+\end{verbatim}
+
+Mungkin ada yang bingung bagaimana cara memindahkan berkas / direktori
+pada \emph{dired-mode}? Gampang kok tinggal pilih satu [beberapa] atau 
+direktori yang ingin Anda pindahkan, kemudian tekan \verb=R=.
+
+\subsection{org-mode}
+Apa itu \emph{org-mode}? 
+
+\emph{Org mode is for keeping notes, maintaining TODO lists, planning projects, and authoring documents with a fast and effective plain-text system.}\footnote{http://www.orgmode.org}
+
+\emph{org-mode} merupakan salah satu fitur andalan \verb=emacs=. Seperti apakah
+\emph{org-mode} itu? Mari kita langsung ke contoh saja ...
+
+\subsubsection{Instalasi}
+
+Pertama kali mari kita pasang \verb=org-mode=, pada \verb=Ubuntu=, ketik:
+
+\begin{verbatim}
+sudo apt-get install org-mode
+\end{verbatim}
+
+\subsubsection{Aktifkan org-mode}
+
+Buka berkas baru, kemudian aktifkan \emph{org-mode} dengan:
+
+\begin{verbatim}
+|--------------+-------------------|
+| Perintah     | Keterangan        |
+|--------------+-------------------|
+| M-x org-mode | Aktifkan org-mode |
+|--------------+-------------------|
+\end{verbatim}
+
+Jika Anda ingin \emph{org-mode} terpanggil secara otomatis setiap kali
+\verb=emacs= dinyalakan, silakan sunting berkas \verb=.emacs= Anda
+dan isikan baris berikut:
+
+\begin{verbatim}
+;; Must have org-mode loaded before we can configure org-babel
+(require 'org-install)
+\end{verbatim}
+
+\subsubsection{Navigasi Cepat}
+Untuk berpindah secara cepat antar headline, berikut tombol kombinasinya:
+
+\begin{verbatim}
+|----------+----------------------------------|
+| Perintah | Keterangan                       |
+|----------+----------------------------------|
+| C-c C-n  | Berpindah ke headline berikutnya |
+| C-c C-p  | Berpindah ke headline sebelumnya |
+|----------+----------------------------------|
+\end{verbatim}
+
+\subsubsection{Format Standar Dokumen Org}
+
+Format dasar dokumen \verb=org= adalah:
+
+\begin{verbatim}
+|------+------------------------|
+| Kode | Keterangan             |
+|------+------------------------|
+| *    | bagian utama           |
+| **   | subbagian tingkat dua  |
+| ***  | subbagian tingkat tiga |
+| -    | list                   |
+| /i/  | cetak miring           |
+| *b/  | cetak tebal            |
+| _u_  | garis bawah            |
+| =c=  | true type font (code)  |
+|------+------------------------|
+\end{verbatim}
+
+Untuk mengetahui format lain, tekan \texttt{C-c C-x C-f}.
+
+\subsubsection{Promote / Demote Headline}
+Fitur ini berguna untuk mengubah secara cepat sebuah \emph{headline} yang
+tadinya bintang satu, menjadi bintang dua dan seterusnya.
+
+\begin{verbatim}
+|------------------------+---------------------------|
+| Perintah               | Keterangan                |
+|------------------------+---------------------------|
+| M-S-Panah Kanan / Kiri | Promote / Demote Headline |
+|------------------------+---------------------------|
+\end{verbatim}
+
+\subsubsection{Ekspor Dokumen}
+Dengan menggunakan \emph{org-mode}, Anda dapat dengan mudah meng-\emph{export}
+dokumen Anda ke berbagai format, misal \verb=HTML=, \verb=LaTex= maupun 
+format-format lain.
+
+Berikut contoh berkas yang menggunakan \emph{org-mode}
+
+\begin{verbatim}
+* Judul
+  Isi dari judul
+** Sub Judul 1
+*** Sub Judul 2
+\end{verbatim}
+
+Mari kita \emph{export} dokumen di atas ke dalam format \verb=HTML= dengan cara:
+
+\begin{verbatim}
+|----------+------------------------------|
+| Perintah | Keterangan                   |
+|----------+------------------------------|
+| C-c C-e  | Aktifkan export mode         |
+| b        | Pilih b untuk export ke html |
+| <RETURN> | Tekan Enter                  |
+|----------+------------------------------|
+\end{verbatim}
+
+Silakan ditunggu sebentar, berikutnya \verb=emacs= akan menampilkan hasil
+\emph{export} tadi dalam aplikasi \emph{browser}.
+
+Perlu diketahui bahwa \emph{option} \verb=b= di atas hanyalah salah satu dari
+sekian banyak pilihan format dokumen yang akan di-\emph{export}. Untuk 
+format-format lain, silakan di-\emph{explore} lebih lanjut.
+
+\subsubsection{Expand and Collapse Tree}
+Jika Anda sudah pernah menggunakan konsep \emph{folding}, tentu tidak akan
+bingung, \emph{org-mode} mendukung hal tersebut dengan cara menekan:
+
+\begin{verbatim}
+|----------+------------------------|
+| Perintah | Keterangan             |
+|----------+------------------------|
+| <TAB>    | rotate current subtree |
+| atau     |                        |
+| S-<TAB>  | rotate entire buffer   |
+|----------+------------------------|
+\end{verbatim}
+
+\verb=S= adalah tombol \verb=Shift=.
+
+\subsubsection{Format Font}
+Untuk memformat huruf dalam lingkungan \emph{org-mode}, cukup tambahkan
+karakter-karakter khusus berikut di awal dan di akhir kata yang ingin 
+Anda format.
+
+Misalnya, untuk mencetak huruf tebal, tambahkan tanda \verb=*= di awal
+dan di akhir kata, \verb=*ini akan dicetak tebal*=.
+
+Berikut daftar lengkap format huruf pada \emph{org-mode}:
+
+\begin{verbatim}
+|-------------+-------------------------|
+| Perintah    | Keterangan              |
+|-------------+-------------------------|
+| *bold*      | cetak tebal             |
+| /italics/   | cetak miring            |
+| _underline_ | garis bawah             |
+| =code=      | format untuk kode       |
+| ~verbatim~  | format font mesin ketik |
+|-------------+-------------------------|
+\end{verbatim}
+
+\subsubsection{Comment}
+Untuk melakukan \emph{comment}, gunakan tanda \verb=#= di awal baris, atau
+tambahkan kata \verb=COMMENT= jika Anda ingin memberi \emph{comment} pada
+sebuah \emph{entry}, sebagai contoh:
+
+\begin{verbatim}
+# Ini tidak akan di export
+** COMMENT subbagian ini juga tidak akan di export
+isi dari subbagian ini juga tidak akan di export
+\end{verbatim}
+
+\subsubsection{Lists}
+Berikut ini adalah cara membuat \emph{lists} pada \emph{org-mode}:
+
+\begin{verbatim}
+- TODO
+  - Mandi
+  - Sarapan
+  - Coding
+\end{verbatim}
+
+\noindent\textbf{Merubah Jenis List}
+
+Ada beberapa macam list dalam \emph{org-mode}, seperti angka, tanda kurang,
+angka dengan kurung, tanda tambah, dsb. Anda dapat merubahnya secara 
+otomatis menggunakan tombol:
+
+\begin{verbatim}
+|----------------------+------------------------------|
+| Perintah             | Keterangan                   |
+|----------------------+------------------------------|
+| S-Panah Kanan / Kiri | Merubah jenis list numbering |
+|----------------------+------------------------------|
+\end{verbatim}
+
+\subsubsection{Partial Export}
+Selain meng-\emph{export} seluruh dokumen, Anda pun dapat melakukan 
+\emph{export} hanya pada bagian tertentu, dengan cara menyorot bagian yang 
+ingin Anda sorot, kemudian tekan \verb=C-c C-e b= untuk \emph{export} ke 
+format \verb=HTML=.
+
+\subsubsection{Todo Items}
+Untuk membuat daftar \emph{todo items}, lihat contoh berikut:
+
+\begin{verbatim}
+- [X] emacs
+- [ ] vim
+- [ ] others
+\end{verbatim}
+
+Untuk memberi (menghilangkan) centang, gunakan perintah:
+
+\begin{verbatim}
+|----------+---------------------------------------|
+| Perintah | Keterangan                            |
+|----------+---------------------------------------|
+| C-c C-c  | Memberi / menghilangkan tanda centang |
+|----------+---------------------------------------|
+\end{verbatim}
+
+\subsubsection{TODO and DONE items}
+Selain menggunakan sistem \emph{checklist} di atas, Anda pun dapat membuat
+\emph{TODO DONE} menggunakan format sebagai berikut:
+
+\begin{verbatim}
+* DONE Go to school
+* TODO Doing homework
+\end{verbatim}
+
+Berikut cara membuatnya:
+
+\begin{verbatim}
+* <SPACE> C-c C-t <Go to school>
+\end{verbatim}
+
+Atau:
+
+\begin{verbatim}
+* S-<RightArrow>
+\end{verbatim}
+
+Untuk mengubah dari \emph{TODO} menjadi \emph{DONE}, cukup tekan
+\verb=C-c C-t= sekali lagi.
+
+\subsubsection{Date and Time}
+Untuk memasukkan \emph{date and time stamp}, gunakan perintah berikut:
+
+\begin{verbatim}
+|-----------+---------------------------------|
+| Perintah  | Keterangan                      |
+|-----------+---------------------------------|
+| C-c .     | memasukkan timestampe           |
+| C-u C-c . | memasukkan timestamp dengan jam |
+|-----------+---------------------------------|
+\end{verbatim}
+
+Begitu Anda tekan \verb=RETURN=, maka akan muncul kalendar di bagian bawah
+layar \verb=emacs= Anda. Selanjutnya Anda dapat melakukan navigasi dengan
+menggunakan \emph{mouse} Anda.
+
+\begin{verbatim}
+<2014-05-15 Thu>
+<2013-01-14 Mon 08:57>
+\end{verbatim}
+
+Anda dapat menyunting tanggal di atas dengan mengarahkan \emph{point} Anda
+ke angka tahun, kemudian tekan \verb=S-Up= atau \verb=S-Down= untuk 
+menambah atau mengurangi angka tahun, begitu pula dengan bulan, tanggal, hari
+dapat Anda ubah seperti cara di atas.
+
+Khusus untuk mengganti hari (tanggal), Anda dapat menggunakan tombol:
+
+\begin{verbatim}
+|--------------+---------------------|
+| Perintah     | Keterangan          |
+|--------------+---------------------|
+| S-LeftArrow  | previous date / day |
+| S-RightArrow | next date / day     |
+|--------------+---------------------|
+\end{verbatim}
+
+\subsubsection{Links}
+Berikut ini format untuk membuat \emph{links} dalam \emph{org-mode}:
+
+\begin{verbatim}
+http://www.infotiket.com
+\end{verbatim}
+
+atau:
+
+\begin{verbatim}
+[[http://www.elapak.com][Situs Jual Beli Indonesia]]
+\end{verbatim}
+
+Begitu Anda tutup tanda \emph{square bracket} yang terakhir, format \emph{URL}
+di atas otomatis akan berubah menjadi sebuah \emph{link} dengan \emph{anchor}:
+
+\begin{verbatim}
+Situs Jual Beli Indonesia
+\end{verbatim}
+
+Untuk menyunting \emph{link} di atas, tempatkan \emph{point} pada \emph{URL},
+kemudian tekan:
+
+\begin{verbatim}
+|----------+--------------------|
+| Perintah | Keterangan         |
+|----------+--------------------|
+| C-c C-l  | Sunting link (url) |
+|----------+--------------------|
+\end{verbatim}
+
+\subsubsection{Tagging}
+Berikut cara membuat \emph{tagging} dalam \verb=emacs=:
+
+Arahkan \emph{mouse} ke salah satu bagian atau subbagian, kemudian tekan:
+
+\begin{verbatim}
+|----------+---------------------|
+| Perintah | Keterangan          |
+|----------+---------------------|
+| C-c C-c  | Menambahkan tagging |
+|----------+---------------------|
+\end{verbatim}
+
+Nanti akan muncul \emph{prompt} di bagian bawah layar \verb=emacs=, selanjutnya
+isikan \emph{tags} yang Anda inginkan. Untuk menyunting \emph{tags}, tinggal 
+ulangi perintah \verb=C-c C-c= di atas.
+
+\subsubsection{Membuat Tabel}
+
+Berikut cara membuat tabel dalam \emph{org-mode}:
+
+\begin{verbatim}
+| kolom 1 | kolom 2 |
+|---<TAB>
+some data<TAB>123
+<ENTER>
+<ENTER>
+<ENTER>
+<TAB>
+<TAB>
+\end{verbatim}
+
+Dan berikut hasilnya:
+
+\begin{verbatim}
+| kolom 1   | kolom 2 |
+|-----------+---------|
+| some data |     123 |
+|           |         |
+|           |         |
+|           |         |
+|           |         |
+|           |         |
+\end{verbatim}
+
+Anda dapat melakukan operasi matematika dengan tabel tersebut, silakan
+di-\emph{explore} sendiri.
+
+\subsubsection{Image}
+Untuk menampilkan gambar di org-mode yang latex friendly, gunakan kode berikut:
+
+\begin{verbatim}
+#+CAPTION: Plot TLKM.JK dan SMA20
+#+NAME: fig:tlkm
+#+ATTR_LaTeX: placement=[H]
+[[./images/tlkm.png]]
+\end{verbatim}
+
+\subsubsection{Source Code}
+Sebelum kita dapat menjalankan kode dalam \emph{org-mode}, pastikan kita
+sudah melakukan pengaturan \emph{org-babel} pada berkas \verb=~/.emacs=.
+Isi berkas tersebut dengan baris berikut:
+
+\begin{verbatim}
+; Must have org-mode loaded before we can configure org-babel
+(require 'org-install)
+
+;Some initial languages we want org-babel to support
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '(
+   (sh . t)
+   (python . t)
+   (R . t)
+   (ruby . t)
+   (ditaa . t)
+   (dot . t)
+   (octave . t)
+   (sqlite . t)
+   (perl . t)
+   ))
+\end{verbatim}
+
+Selanjutnya silakan \emph{restart} \verb=emacs=.
+
+Untuk menuliskan \emph{source code}, kita dapat menggunakan \emph{tag} berikut:
+
+\begin{verbatim}
+#+BEGIN_SRC sh :exports both
+echo "Hello World!" # C-c C-c
+#+END_SRC
+\end{verbatim}
+
+Tempatkan \emph{point} pada kode, kemudian tekan \verb=C-c C-c=, dan hasilnya:
+
+\begin{verbatim}
+#+BEGIN_SRC sh :exports both
+echo "Hello World!" # C-c C-c
+#+END_SRC
+
+#+results:
+: Hello World!
+\end{verbatim}
+
+Contoh lain untuk kode \verb=python=:
+
+\begin{verbatim}
+#+BEGIN_SRC python :exports both
+return "Hello Python!" # C-c C-c
+#+END_SRC
+
+#+results:
+: Hello Python!
+\end{verbatim}
+
+Mungkin bagi Anda yang terbiasa dengan bahasa pemrograman \verb=python= 
+bertanya-tanya, kenapa menggunakan \verb=return=, dan tidak menggunakan
+\verb=print=. Saya sendiri sampai saat ini belum apa alasan \verb=emacs=
+menggunakan \emph{keyword} \verb=return=, yang jelas jika Anda coba 
+mengganti dengan \verb=print=, maka \emph{result}-nya menjadi
+\verb=none=.
+
+\emph{Note}: \emph{org-babel} ini hanya akan jalan jika Anda sudah 
+memasang paket \verb=texlive-latex-extra= pada sistem operasi Anda. Jika
+Anda pengguna Ubuntu, tentunya gunakan:
+
+\begin{verbatim}
+sudo apt-get install texlive-latex-extra
+\end{verbatim}
+
+\subsubsection{Paket fancyhdr}
+Org mode mendukung paket fancyhdr seperti ketika membuat dokumen Latex
+pada umumnya, berikut caranya:
+
+\begin{verbatim}
+#+LATEX_HEADER: \usepackage{fancyhdr}
+#+LATEX_HEADER: \pagestyle{fancy}
+#+LATEX_HEADER: \cfoot{}
+#+LATEX_HEADER: \rfoot{\thepage}
+\end{verbatim}
+
+\subsubsection{Syntax Highlighting}
+Apabila Anda ingin fitur /syntax highlighting/ aktif pada berkas PDF,
+caranya adalah dengan mengaktifkan paket \verb=minted=.
+
+Pertama, pasang pustaka pygments, dengan cara:
+
+\begin{verbatim}
+$ sudo pip install pygments
+\end{verbatim}
+
+Setelah itu, sunting berkas \verb=.emacs= Anda:
+
+\begin{verbatim}
+(require 'org-latex)
+(setq org-export-latex-listings 'minted)
+(add-to-list 'org-export-latex-packages-alist '("" "minted"))
+\end{verbatim}
+
+Terakhir, masukkan kode berikut di \emph{header} berkas \verb=Org= Anda:
+\begin{verbatim}
+#+LaTeX_HEADER: \usepackage{minted}
+\end{verbatim}
+
+\emph{Voila}, semua kode sekarang menjadi berwarna!
+
+\subsubsection{Mengganti ukuran font pada table}
+Berikut ini contoh mengganti ukuran font tabel menjadi footnotesize
+\begin{verbatim}
+#+LATEX: {\footnotesize
+#+ATTR_LaTeX: align=cl placement=[H]
+|----+--------------------------------------------------------|
+| H0 | Korelasi antara harga saham tinggi sehingga harga      |
+|    | saham yang akan datang dapat diramalkan dengan         |
+|    | menggunakan harga di masa lalu                         |
+|----+--------------------------------------------------------|
+| H1 | Korelasi antara harga saham rendah sehingga harga      |
+|    | saham di masa depan tidak dapat diprediksi menggunakan |
+|    | data harga masa lalu                                   |
+|----+--------------------------------------------------------|
+\end{verbatim}
+
+\subsubsection{Contoh Berkas Org-Mode untuk Catatan Harian}
+Berikut ini contoh penggunaan berkas \emph{org-mode} untuk \emph{daily log}:
+
+\begin{verbatim}
+* Jan 14 in Yogyakarta <2013-01-14 Mon>			:day:
+
+** Writing emacs documentation
+
+   Today we write about org-mode / org-babel
+\end{verbatim}
+
+Salah satu hal yang membuat saya suka dengan \verb=emacs= adalah komunitas
+pengguna \verb=emacs= sangat mendorong kita sebagai pengguna \verb=emacs=
+untuk membuat catatan harian seperti di atas, hal ini berlaku tidak hanya
+bagi peneliti namun juga \emph{programmer} pengguna \verb=emacs=.
+
+\subsection{DocView-Mode}
+Tahukah Anda, bahwa Anda dapat membuka berkas \verb=PDF= di \verb=emacs=?
+\verb=Emacs= menyediakan \emph{mode} khusus untuk ini, yakni 
+\emph{docview-mode}.
+
+Caranya sama dengan ketika Anda membuka berkas baru, yakni dengan menekan
+\verb=C-x C-f= kemudian pilih berkas \verb=PDF= Anda, kemudian tekan 
+\verb=Enter=.
+
+Berikut ini adalah perintah untuk berinteraksi ketika bekerja dengan 
+\emph{DocView-mode}:
+
+\begin{verbatim}
+|--------------------------------+-----------------------------------|
+| Perintah                       | Keterangan                        |
+|--------------------------------+-----------------------------------|
+| <SPC>                          | Menuju ke halaman berikutnya      |
+| <Backspace>                    | Menuju ke halaman sebelumnya      |
+| +                              | Memperbesar halaman (Zoom in)     |
+| -                              | Memperkecil halaman (Zoom out)    |
+| M-<                            | Menuju ke awal dokumen            |
+| M->                            | Menuju ke akhir dokumen           |
+| M-g g <num> atau M-g M-g <num> | Menuju ke halaman tertentu        |
+| C-s                            | forward search                    |
+| C-r                            | backward search                   |
+| C-u C-s                        | memulai pencarian baru (forward)  |
+| C-u C-r                        | memulai pencarian baru (backward) |
+| s s                            | slicing halaman                   |
+| s m                            | slicing dengan mouse              |
+| s r                            | reset ke default                  |
+| q                              | keluar dari mode docview          |
+|--------------------------------+-----------------------------------|
+\end{verbatim}
+
+Terkait dengan fitur \emph{search}, \emph{docview-mode} memiliki beberapa
+perintah khusus, misalnya ketika Anda sudah selesai melakukan pencarian,
+kemudian ingin melanjutkan ke pencarian berikutnya, maka Anda harus menekan
+\verb=C-u C-s= atau \verb=C-u C-r=. Setelah menekan tombol \verb=Enter=, 
+maka hasil pencarian pada dokumen tidak akan di-\emph{highlight}, melainkan
+akan ditampilkan dalam bentuk \emph{tooltip}, yang akan muncul ketika Anda
+melakukan \emph{hover} perangkat \emph{mouse} Anda pada halaman tersebut.
+
+Berkas lain yang didukung oleh \emph{docview-mode} ini adalah \verb=DVI=, 
+\verb=PostScript(PS)=, \verb=OpenDocument=, dan 
+\verb=Microsoft Office documents=.
+
+\subsection{viper-mode}
+Bagi Anda yang suka dengan model navigasi \verb=Vim=, Anda dapat
+mengaktifkan \emph{viper-mode}. \emph{Mode} ini mendukung semua perintah
+navigasi seperti seperti ketika bekerja dengan \verb=Vim=, misal \verb=w=
+untuk menggerakkan \emph{point} ke kata selanjutnya, \verb=G= untuk bergerak
+ke akhir \emph{buffer}, dan perintah-perintah navigasi lainnya.
+
+Apabila Anda tertarik dengan \verb=Vim=, penulis juga menyediakan tutorial
+\verb=Vim= dalam format \verb=PDF=, dan bisa diunduh di alamat berikut:
+
+\begin{verbatim}
+http://dl.dropbox.com/u/5052616/vim_docs.pdf
+\end{verbatim}
+
+
+\section{Menjalankan Shell dari emacs}
+\verb=Emacs= memiliki berbagai macam perintah untuk berinteraksi dengan
+\emph{shell}:
+
+\begin{verbatim}
+|-------------------+--------------------------------------------------|
+| Perintah          | Keterangan                                       |
+|-------------------+--------------------------------------------------|
+| M-! cmd <RET>     | menjalankan perintah shell dan menampilkan hasil |
+| M-/ cmd <RET>     | menjalankan perintah shell dengan region sebagai |
+|                   | input.                                           |
+| M-& cmd <RET>     | menjalankan perintah shell asynchronously, dan   |
+|                   | menampilkan hasil.                               |
+| M-x shell         | menjalankan subshell dengan input dan output     |
+|                   | melalui buffer emacs. Beberapa command tidak     |
+|                   | dapat berjalan pada mode ini.                    |
+| C-u M-x <RET>     | Menjalankan shell kedua (multiple shell).        |
+| M-x term          | menjalankan subshell dengan input dan output     |
+|                   | melalui buffer emacs. Mode ini mendukung semua   |
+|                   | command seperti kita membuka aplikasi terminal.  |
+| M-x rename-buffer | Mengganti nama buffer.                           |
+|-------------------+--------------------------------------------------|
+\end{verbatim}
+
+\verb=Shell= tersebut tidak ubahnya seperti \emph{buffer}, sehingga Anda dapat 
+memanggilnya (menutupnya) seperti ketika kita bekerja dengan \emph{buffer}.
+
+Untuk mengulangi perintah sebelumnya pada \verb=shell=, tekan:
+
+\begin{verbatim}
+C-<Panah atas>
+\end{verbatim}
+
+Penulis sendiri tidak mengetahui kenapa \emph{shell mode} tidak mendukung
+semua perintah yang ada pada \verb=Shell=, misal perintah \verb=mkvirtualenv=
+yang sering penulis pakai ketika bekerja dengan \verb=Python= tidak dapat 
+bekerja pada \emph{shell mode}, namun dapat bekerja pada \emph{term mode}.
+
+Anda dapat menjalankan lebih dari satu \emph{shell mode} dengan cara 
+menekan \verb=C-u M-x shell= diikuti dengan nama \emph{shell} yang Anda 
+inginkan, atau cukup tekan \verb=Enter= untuk memberi nama secara 
+\emph{default} (\verb=*shell*<2>=). Untuk mengganti nama \emph{buffer}
+Anda dapat menggunakan perintah \verb=M-x rename-buffer=.
+
+Khusus untuk mode \emph{term}, jangan bingung ketika menggunakannya, ada
+beberapa perbedaan perintah, semua perintah \verb=emacs= yang diawali dengan
+\verb=C-x= berubah menjadi \verb=C-c=, jadi semisal Anda ingin berpindah
+\emph{buffer}, tekan \verb=C-c b=. Penulis sendiri sebisa mungkin menghindari
+mode \emph{term}, karena terkadang lupa harus mengganti perintah \verb=C-x=
+menjadi \verb=C-c=, namun untuk hal-hal yang memang harus dijalankan melalui
+\verb=terminal=, mau tidak mau penulis menggunakan mode \emph{term}.
+
+\section{Tips dan Tricks}
+
+\subsection{Multiple Windows}
+Untuk meningkatkan efisiensi dalam bekerja, Anda dapat menggunakan fitur
+\emph{multiple windows}.
+
+\begin{verbatim}
+|---------------+---------------------------------------------------------|
+| Perintah      | Keterangan                                              |
+|---------------+---------------------------------------------------------|
+| C-x 3         | Split Vertical                                          |
+| C-x 2         | Split Horizontal                                        |
+| C-x 1         | Menutup semua window kecuali window di mana point aktif |
+| C-x 0         | Menutup window aktif (tempat point berada)              |
+| C-x o         | Berpindah antar window                                  |
+| C-M-v         | Menggulung layar window dibawahnya                      |
+| C-x 4 C-f     | Membuka berkas (buffer) pada window sebelahnya          |
+| C-u 6 C-x ^   | Memperbesar ukuran window sebanyak 6 baris              |
+| C-u - 6 C-x ^ | Memperkecil ukuran window sebanyak 6 baris              |
+|---------------+---------------------------------------------------------|
+\end{verbatim}
+
+Perintah \verb=C-M-v= berguna ketika kita ingin menjadikan \emph{window} lain
+sebagai referensi terhadap pekerjaan kita, tanpa harus berpindah \emph{window},
+Anda dapat menggulung layar referensi tersebut, dan \emph{point} tetap berada 
+pada dokumen (berkas) yang sedang kita kerjakan.
+
+Perintah \verb=C-x 4 C-f= berguna untuk membuka \emph{buffer} berkas pada
+\emph{window} sebelahnya.
+
+\subsection{Multiple Frame}
+Apabila Anda bekerja dengan \emph{GUI}, maka membuat \emph{frame} baru adalah
+seperti ketika Anda menjalankan \verb=emacs= pertama kali. Fitur ini tidak 
+berguna ketika Anda bekerja dengan \verb=emacs= dalam \emph{mode} 
+\verb=terminal= (\verb=emacs -nw=).
+
+Berikut ini beberapa perintah untuk bekerja dengan \emph{multi-frame}:
+
+\begin{verbatim}
+|---------------------+----------------------------------------------|
+| Perintah            | Keterangan                                   |
+|---------------------+----------------------------------------------|
+| C-x 5 f <some_file> | Membuka berkas dalam frame baru              |
+| C-x 5 o             | Berpindah antar frame                        |
+| C-x 5 b             | Berpindah ke buffer yang ada pada frame lain |
+| C-x 5 0             | Menutup frame                                |
+|---------------------+----------------------------------------------|
+\end{verbatim}
+
+Jika diperhatikan perintah-perintah di atas sama dengan perintah ketika kita
+bekerja dalam \emph{single-frame}, yang membedakan adalah kita menambahkan
+angka \verb=5= pada setiap perintah yang kita lakukan untuk bekerja dengan 
+\emph{multi-frame}.
+
+\subsection{Menggagalkan Perintah}
+Jika Anda membuka \verb=emacs= pertama kali, maka pada baris ke-13 Anda akan
+temukan kalimat berikut:
+
+\begin{verbatim}
+To quit a partially entered command, type Control-g.
+\end{verbatim}
+
+\begin{verbatim}
+|----------+-----------------------|
+| Perintah | Keterangan            |
+|----------+-----------------------|
+| C-g      | Menggagalkan perintah |
+|----------+-----------------------|
+\end{verbatim}
+
+Biar lebih jelas, silakan perhatikan contoh berikut:
+
+Anda ingin membuka berkas dengan menekan tombol \verb=C-x C-f=, namun 
+tiba-tiba Anda ingin menggagalkan perintah tersebut, caranya cukup hanya
+dengan menekan \verb=C-g=, dengan begitu Anda dapat memberikan perintah
+baru ke \verb=emacs=.
+
+\subsection{Memunculkan Menu Bantuan (Help)}
+Anda dapat menampilkan menu bantuan (\emph{help}) dengan menekan tombol
+berikut:
+
+\begin{verbatim}
+|----------------------------+-----------------------------------------|
+| Perintah                   | Keterangan                              |
+|----------------------------+-----------------------------------------|
+| F1                         |                                         |
+| M-x help <RET>             |                                         |
+| C-h <Kombinasi Perintah>   |                                         |
+| C-h ?                      |                                         |
+| C-h c <Kombinasi Perintah> | help singkat, misal: C-h c C-a          |
+| C-h k <Kombinasi Perintah> | help panjang, misal: C-h k C-a          |
+| C-h f <Deskripsi Fungsi>   | help berdasar fungsi,                   |
+|                            | misal: C-h previous line                |
+| C-h m                      | help untuk mode yang sedang digunakan   |
+| C-h v                      | dokumentasi variabel                    |
+| C-h a <keyword>            | help berdasar keyword, misal C-h a file |
+| C-h i                      | emacs manual, a.k.a Info                |
+|----------------------------+-----------------------------------------|
+\end{verbatim}
+
+Sebagai contoh, Anda ingin mengetahui untuk apakah kombinasi perintah
+\verb=M-a=:
+
+\begin{verbatim}
+C-h k M-a
+\end{verbatim}
+
+Maka \verb=emacs= akan memunculkan \emph{window} baru dalam \emph{mode split}
+horisontal. Untuk kembali melakukan penyuntingan, cukup tutup \emph{window}
+tersebut dengan perintah yang sama dengan ketika kita ingin menutup 
+\emph{split window}, yakni:
+
+\begin{verbatim}
+|----------+------------------------------------------------|
+| Perintah | Keterangan                                     |
+|----------+------------------------------------------------|
+| C-x 1    | Hanya menampilkan 1 window dimana point berada |
+|----------+------------------------------------------------|
+\end{verbatim}
+
+Perintah \verb=C-h= ini juga dapat kita ganti dengan tombol \verb=F1=, jadi 
+kalau mau melihat dokumentasi tentang \emph{mode} dokumen yang sedang
+digunakan, cukup tekan \verb=F1 m=, yang \emph{equal} dengan \verb=C-h m=.
+
+\subsection{Suspend Mode}
+Fitur \emph{suspend mode} ini berguna ketika Anda tidak sedang dalam 
+\emph{mode} \verb=GUI=, yakni untuk beralih dengan cepat ke 
+\emph{Shell Interpreter} kemudian menjalankan \emph{Shell command} dari sana.
+
+Caranya adalah:
+
+\begin{verbatim}
+|----------+---------------|
+| Perintah | Keterangan    |
+|----------+---------------|
+| C-z      | Suspend emacs |
+|----------+---------------|
+\end{verbatim}
+
+Ketika Anda sedang dalam \emph{mode} \verb=GUI=, dan menekan \verb=C-z=, maka
+layar \verb=emacs= akan ter-\emph{minimize} (\emph{iconify}).
+
+Begitu sudah selesai, Anda dapat kembali ke \verb=emacs= dengan mengetik
+\verb=fg= pada \emph{Shell}.
+
+\begin{verbatim}
+|----------+------------------|
+| Perintah | Keterangan       |
+|----------+------------------|
+| fg       | kembali ke emacs |
+|----------+------------------|
+\end{verbatim}
+
+\subsection{Undo dan Redo}
+Untuk melakukan \emph{undo} dan \emph{redo} pada \verb=emacs=:
+
+\begin{verbatim}
+|----------+-------------------------------------------|
+| Perintah | Keterangan                                |
+|----------+-------------------------------------------|
+| C-x u    | Undo                                      |
+| C-_      | Undo                                      |
+| C-g C-_  | Redo, untuk multiple redo, tekan C-_ lagi |
+|          | sampai menemukan yang dicari.             |
+|----------+-------------------------------------------|
+\end{verbatim}
+
+Konsep \emph{redo} pada \verb=emacs= agak membingungkan, saran saya banyak
+banyaklah berlatih dan membiasaka diri dengan \emph{redo} pada \verb=emacs=.
+
+\subsection{Transpose}
+
+Sesuai dengan namanya, fungsi perintah ini adalah untuk mengubah urutan
+karakter / kata, sebagai contoh:
+
+\begin{verbatim}
+thisi s
+\end{verbatim}
+
+Letakkan \emph{point} pada spasi, kemudian tekan:
+
+\begin{verbatim}
+C-t
+\end{verbatim}
+
+Dan hasilnya:
+
+\begin{verbatim}
+this is
+\end{verbatim}
+
+Sekarang menggunakan kalimat \verb=this is= di atas, mari kita rubah
+menjadi \verb=is this=:
+
+Letakkan \emph{point} pada kata \verb=this=, kemudian tekan:
+
+\begin{verbatim}
+M-t
+\end{verbatim}
+
+Hasilnya:
+
+\begin{verbatim}
+is this
+\end{verbatim}
+
+Anda juga dapat melakukan \emph{transpose} pada baris di mana \emph{point}
+berada dengan baris di atasnya:
+
+\begin{verbatim}
+C-x C-t
+   : transpose baris dengan baris atasnya
+\end{verbatim}
+
+Dan berikut adalah rangkuman perintah untuk \emph{transpose}:
+
+\begin{verbatim}
+|----------+-----------------------------------------|
+| Perintah | Keterangan                              |
+|----------+-----------------------------------------|
+| C-t      | transpose point dengan point sebelumnya |
+| M-t      | transpose kata dengan kata sebelumnya   |
+| C-x C-t  | transpose baris dengan baris sebelumnya |
+|----------+-----------------------------------------|
+\end{verbatim}
+
+\subsection{Rectangles / Multi-Cursor}
+Fitur ini berfungsi untuk menyunting kolom pada teks. Sebagai contoh Anda 
+memiliki kode \verb=javascript= berikut:
+
+\begin{verbatim}
+var a = 'me';
+var b = 'you';
+var c = 'they';
+\end{verbatim}
+
+Anda ingin mengubah kata \verb=var= menjadi \verb=this.=. Dengan menggunakan
+fitur \verb=rectangles=, hal ini mudah untuk dilakukan. Berikut caranya:
+
+\begin{verbatim}
+|---------------+-------------------------------------------|
+| Perintah      | Keterangan                                |
+|---------------+-------------------------------------------|
+| C-n           | Turun satu baris                          |
+| C-n           | Turun satu baris                          |
+| M-f           | Menuju ke kata selanjutnya                |
+| M-f           | Menuju ke kata selanjutnya                |
+| C-b           | Menuju ke 1 karakter sebelumnya           |
+| C-x r t this. | Ganti rectangle content dengan kata this. |
+| Enter         | Enter                                     |
+|---------------+-------------------------------------------|
+\end{verbatim}
+
+Perintah \verb=rectangle= yang lain:
+
+\begin{verbatim}
+|---------------------------------------------+--------------------------------|
+| Perintah                                    | Keterangan                     |
+|---------------------------------------------+--------------------------------|
+| C-x r k                                     | hapus (kill) teks              |
+|                                             | dalam region yang disorot      |
+| C-x r d                                     | hapus (delete) teks dalam      |
+|                                             | region yang disorot            |
+| C-x r y                                     | tempel (yank) rectangle        |
+|                                             | terakhir yang dihapus (kill)   |
+| C-x r o                                     | insert blank space ke dalam    |
+|                                             | region yang disorot            |
+| C-x r N                                     | memasukkan nomor baris pada    |
+|                                             | region yang disorot            |
+| C-x r c                                     | mengosongkan (clear) region    |
+|                                             | yang disorot (ganti dengan)    |
+| M-x delete-whitespace-rectangle             | spasi menghapus (delete) semua |
+|                                             | whitepace dalam region         |
+| C-x r t string <RET>                        | replace region yang disorot    |
+|                                             | dengan string teks             |
+| M-x string-insert-rectangle<RET>string<RET> | memasukkan teks string dalam   |
+|                                             | setiap baris pada rectangle    |
+|---------------------------------------------+--------------------------------|
+\end{verbatim}
+
+Perbedaan antara \emph{kill} dan \emph{delete} adalah kalau perintah
+\emph{kill}, Anda menyimpan teks dalam \emph{rectangle ring} 
+(\emph{clipboard}), sedangkan perintah \emph{delete} tidak menyimpan.
+
+Satu contoh lagi penggunaan \verb=C-x r c=, misal Anda memiliki teks berikut:
+
+\begin{verbatim}
+++++++++++
+++++++++++
+++++++++++
+++++++++++
+++++++++++
+\end{verbatim}
+
+Lakukan perintah berikut (\emph{point} berada di pojok kiri atas)
+
+\begin{verbatim}
+|-----------+-----------------------------------------------|
+| Perintah  | Keterangan                                    |
+|-----------+-----------------------------------------------|
+| C-a       | Menuju ke awal baris                          |
+| C-n       | Menuju ke baris ke-2                          |
+| C-f       | Maju 1 karakter                               |
+| C-Space   | Mart set                                      |
+| C-u 2 C-n | Turun 2 baris                                 |
+| C-e       | Menuju ke akhir baris                         |
+| C-b       | Mundur 1 karakter                             |
+| C-x r c   | rectangle clear (ganti karakter dengan spasi) |
+|-----------+-----------------------------------------------|
+\end{verbatim}
+
+Hasilnya:
+
+\begin{verbatim}
+++++++++++
++        +
++        +
++        +
+++++++++++
+\end{verbatim}
+
+\emph{Pretty neat, huh?}
+
+\subsection{Melakukan Perulangan Angka}
+Pada bagian atas sudah disinggung bagaimana melakukan perulangan pada 
+\verb=emacs=, yakni dengan menggunakan perintah:
+
+\begin{verbatim}
+C-u 5 $
+\end{verbatim}
+
+Maka hasilnya:
+
+\begin{verbatim}
+$$$$$
+\end{verbatim}
+
+Namun perulangan ini tidak berlaku untuk angka, misal Anda ingin mengulang
+angka 8 sebanyak 8 kali, maka perintah \verb=C-u 8 8= tidak akan berhasil.
+Bagaimana caranya:
+
+\begin{verbatim}
+C-u 8 C-u 8
+\end{verbatim}
+
+Dan, hasilnya:
+
+\begin{verbatim}
+88888888
+\end{verbatim}
+
+\subsection{Dynamic Abbrev}
+Fitur ini mungkin bagi sebagian orang dinamakan sebagai \emph{auto completion},
+sesuai dengan namanya, fitur ini berfungsi untuk \emph{auto complete} dengan 
+cara mencocokkan dengan pola kata yang sudah ada pada dokumen.
+
+Caranya adalah dengan menekan:
+
+\begin{verbatim}
+|----------+------------------------------------------|
+| Perintah | Keterangan                               |
+|----------+------------------------------------------|
+| M-/      | auto-complete word                       |
+| C-M-/    | menampilkan semua kata yang cocok        |
+|          | (urut sesuai dengan frekuensi kemunculan |
+|          | dalam dokumen                            |
+|----------+------------------------------------------|
+\end{verbatim}
+
+Misal dalam dokumen Anda sudah terdapat kata \verb=emacs=, maka Anda dapat
+melakukan \emph{auto-complete} dengan menekan:
+
+\begin{verbatim}
+em M-/
+\end{verbatim}
+
+Berikutnya akan muncul kata yang diawali dengan kata \verb=em=. Tekan 
+\verb=M-/= lagi akan membawa Anda dengan kata lain yang cocok dengan pola
+tersebut.
+
+\subsection{Hippie-expand}
+Jika pada \verb=dabbrev-expand=, Anda dapat melakukan \emph{auto-completion}
+pada kata, maka dengan \verb=hippie-expand=, Anda dapat mengulang baris.
+
+Caranya adalah dengan mengetikkan beberapa karakter baris yang ingin Anda 
+lakukan \emph{auto-completion}, kemudian tekan:
+
+\begin{verbatim}
+|-------------------+------------------------------|
+| Perintah          | Keterangan                   |
+|-------------------+------------------------------|
+| M-x hippie-expand | Mengaktifkan line-completion |
+|-------------------+------------------------------|
+\end{verbatim}
+
+Maka secara otomatis, \verb=emacs= akan melakukan \emph{auto-completion}
+untuk baris yang memiliki pola yang cocok dengan karakter-karakter tersebut.
+
+
+\subsection{FTP atau SCP Berkas pada Dired Mode}
+Anda dapat melakukan perintah \verb=ftp= atau \verb=scp= pada \emph{dired-mode}
+dengan cara:
+
+\begin{verbatim}
+Mark the files
+! scp * host:/target/dir/ & <RETURN>
+\end{verbatim}
+
+Di sini \verb=emacs= akan mengganti tanda \verb=*= dengan berkas yang sudah
+ditandai dan tanda \verb=&= berarti perintah akan dijalankan secara 
+\emph{async}.
+
+\subsection{Menuju ke Baris Tertentu}
+Kita dapat menuju ke baris tertentu pada dokumen dengan menggunakan perintah:
+
+\begin{verbatim}
+M-g g <Number> <RETURN>
+\end{verbatim}
+
+Sebagai contoh Anda ingin menuju ke baris 1, maka perintahnya:
+
+\begin{verbatim}
+M-g g 1 <RETURN>
+\end{verbatim}
+
+\subsection{Membuat Tabel}
+Secara \emph{default}, \verb=emacs= memiliki fitur untuk membuat tabel dalam
+format \verb=ASCII=. Bagaimana caranya:
+
+\begin{verbatim}
+M-x table-insert
+\end{verbatim}
+
+Selanjutnya akan muncul pertanyaan (konfirmasi) mengenai berapa jumlah kolom, 
+baris dan pertanyaan lain terkait dengan tabel yang ingin Anda buat.
+
+Kemudian Anda tinggal masukkan data ke dalam kolom dan baris yang tersedia.
+Untuk berpindah ke kolom (baris) berikutnya, tekan tombol \verb=Tab=.
+
+Berikut ini contoh tabel \verb=ASCII= dalam \verb=emacs=:
+
+\begin{verbatim}
++-----+------+------------------+
+|Nama |Alamat|Jenis Kelamin     |
+|     |      |                  |
++-----+------+------------------+
+|     |      |                  |
++-----+------+------------------+
+|     |      |                  |
++-----+------+------------------+
+|     |      |                  |
++-----+------+------------------+
+|     |      |                  |
++-----+------+------------------+
+\end{verbatim}
+
+Untuk mengetahui perintah-perintah lain terkait dengan tabel, ketik:
+
+\begin{verbatim}
+M-x table-<Tab>
+\end{verbatim}
+
+\subsection{Membuat Tabel Latex}
+Bagi Anda yang sering berkutat dengan \verb=LaTex=, tentu tidak asing lagi
+dengan \emph{syntax} pembuatan tabel yang terasa membingungkan dan sulit
+dihafal.
+
+Untunglah \verb=emacs= menyediakan \emph{tools} di mana kita bisa membuat
+tabel di \verb=emacs= untuk kemudian di-\emph{export} ke \emph{syntax}
+\verb=LaTex=.
+
+Pertama kita buat dulu tabel pada \verb=emacs= dengan cara:
+
+\begin{verbatim}
+M-x table-insert
+Masukkan variabel jumlah kolom, baris, dan seterusnya
+\end{verbatim}
+
+Yang hasilnya kurang lebih seperti berikut ini:
+
+\begin{verbatim}
++-----+-----+-----+
+|     |     |     |
++-----+-----+-----+
+|     |     |     |
++-----+-----+-----+
+|     |     |     |
++-----+-----+-----+
+\end{verbatim}
+
+Anda dapat berpindah dari satu kolom ke kolom berikutnya dengan menekan
+tombol \verb=Tab=. Dengan \emph{point} masih berada pada tabel, mari kita ubah 
+tabel tersebut ke dalam bahasa \verb=LaTex= dengan cara:
+
+\begin{verbatim}
+C-^
+latex <RETURN>
+\end{verbatim}
+
+Berikutnya akan muncul \emph{window} baru berisikan kode \verb=LaTex= untuk 
+tabel kita tadi. Anda tinggal menyalin kode tersebut ke dalam dokumen Anda.
+Selesai!
+
+Berikut ini contoh kode untuk tabel kita di atas:
+
+\begin{verbatim}
+% This LaTeX table template is generated by emacs 23.3.1
+\begin{tabular}{|l|l|l|}
+\hline
+Number & Title & Address \\
+\hline
+ & & \\
+\hline
+ & & \\
+\hline
+\end{tabular}
+\end{verbatim}
+
+\subsection{Keyboard Macro}
+Ini adalah fitur yang mampu meningkatkan efektivitas ketika bekerja dengan teks.
+Secara \emph{default}, berikut cara untuk bekerja dengan \emph{macro}:
+
+\begin{verbatim}
+|----------+-----------------|
+| Perintah | Keterangan      |
+|----------+-----------------|
+| F3       | emulai macro    |
+| F4       | engakhiri macro |
+| F4       | engulang macro  |
+|----------+-----------------|
+\end{verbatim}
+
+Selain tombol di atas, kita juga dapat menggunakan tombol berikut:
+
+\begin{verbatim}
+|----------+------------------|
+| Perintah | Keterangan       |
+|----------+------------------|
+| C-x (    | memulai macro    |
+| C-x )    | mengakhiri macro |
+| C-x e    | eksekusi macro   |
+|----------+------------------|
+\end{verbatim}
+
+Sebagai contoh, ketika bekerja dengan \verb=LaTex=, Anda akan sering sekali
+mengetik \verb=\emph{}= untuk mencetak miring sebuah kata.
+
+Untuk menghindari pengetikan berulang-ulang, Anda dapat menyimpan hal tersebut 
+ke dalam sebuah \emph{macro}:
+
+\begin{verbatim}
+|----------+---------------------------------|
+| Perintah | Keterangan                      |
+|----------+---------------------------------|
+| F3       | memulai macro                   |
+| \emph{ } | tulis teks yang akan Anda ulang |
+| F4       | akhiri macro                    |
+|----------+---------------------------------|
+\end{verbatim}
+
+Sekarang waktunya untuk mengulang \emph{macro} tersebut, caranya adalah cukup
+dengan menekan \verb=F4= sebanyak yang Anda suka, dan teks tersebut akan
+muncul secara otomatis.
+
+Anda juga dapat memberi nama pada \emph{macro} yang sudah Anda buat
+sebelumnya. Pada contoh di atas, kita beri nama \texttt{miring}. Caranya:
+
+\begin{verbatim}
+|------------------------------------+--------------|
+| Perintah                           | Keterangan   |
+|------------------------------------+--------------|
+| C-x C-k n (kmacro-name-last-macro) | Memberi nama |
+| miring                             | nama         |
+| <RET>                              |              |
+|------------------------------------+--------------|
+\end{verbatim}
+
+Sekarang Anda dapat memanggil \emph{macro} dengan menekan tombol
+\texttt{M-x miring}, dan teks di atas akan terpanggil.
+
+Nama ini akan tersimpan selama session masih aktif, jika Anda ingin
+permanen, Anda dapat menyimpannya dalam sebuah berkas tersendiri atau
+cukup tambahkan dalam berkas \texttt{~/.emacs} Anda.
+
+Caranya buka berkas \texttt{~/.emacs} kemudian tambahkan pada baris
+paling bawah, dengan menekan:
+
+\begin{verbatim}
+M-x insert-kbd-macro <RET> miring <RET>
+\end{verbatim}
+
+Sekarang \emph{macro} sudah tersimpan secara permanen, Anda dapat
+memanggil \emph{macro} ini dengan menekan tombol
+
+\begin{verbatim}
+M-x miring
+\end{verbatim}
+
+\subsection{Lowercase, Uppercase dan Capitalize}
+Berikut ini perintah untuk mengubah teks menjadi \emph{uppercase/lowercase}
+pada \verb=emacs=:
+
+\begin{verbatim}
+|----------+------------------------------------------------|
+| Perintah | Keterangan                                     |
+|----------+------------------------------------------------|
+| C-x C-u  | uppercase                                      |
+| C-x C-l  | lowercase                                      |
+| M-l      | membuat lowercase dari point sampai akhir kata |
+| M-u      | membuat uppercase dari point sampai akhir kata |
+| M-c      | membuat capitalize daerah yang disorot         |
+|----------+------------------------------------------------|
+\end{verbatim}
+
+\subsection{Mengaktifkan Mode Baca (Read-Only)}
+Dengan mengaktifkan status \emph{read-only}, maka kita tidak dapat menyunting
+berkas yang ada pada \verb=emacs=. Hal ini penting untuk menghindari adanya
+ketikan-ketikan dari pihak luar yang tidak kita inginkan.
+
+Berikut perintah untuk menyalakan / mematikan status \emph{read-only}:
+
+\begin{verbatim}
+|----------+-----------------------------------------|
+| Perintah | Keterangan                              |
+|----------+-----------------------------------------|
+| C-x C-q  | Menyalakan / mematikan status read-only |
+|----------+-----------------------------------------|
+\end{verbatim}
+
+Mode \emph{read-only} yang aktif ditandai dengan tanda \verb=%%= di bagian 
+bawah dari layar \verb=emacs= Anda.
+
+\subsection{Memahami Mode Layar pada emacs}
+
+Jika Anda perhatikan pada bagian bawah dari layar kerja \verb=emacs= Anda,
+ada beberapa tanda yang penting untuk mengetahui status dari pekerjaan 
+yang sedang kita kerjakan.
+
+\verb=-UU-:**--F1=
+
+\verb=-UU-:----F1=
+
+\verb=-UU-:%%--F1=
+
+Tanda \verb=**= berarti ada pekerjaan yang belum kita simpan, sedangkan tanda
+\verb=--= berarti pekerjaan belum mengalami perubahan sejak terakhir kali
+kita melakukan penyimpanan, dan tanda \verb=%%= berarti kita sedang berada
+pada modus \emph{read-only}.
+
+\subsection{Menjalankan IRC Client}
+Anda mungkin masih ingat dengan \emph{irc}? Sebuah layanan \emph{chat}
+berbasis teks yang dulu sempat berjaya (waktu itu belum ada Facebook,
+Twitter, dll). Dan tahukah Anda bahwa layanan itu sampai sekarang masih
+\emph{eksis} meski tidak seramai dulu. Salah satu yang masih aktif
+menggunakan layanan ini adalah komunitas \emph{geek} yang bertebaran
+di berbagai \emph{room}, termasuk komunitas pengembangan Python yang
+dapat Anda temui di \verb=#python=. 
+
+Anda tentu juga tahu program \verb=mirc=? Sebuah program \emph{irc chat client}
+yang ngetrend sekali pada jamannya. Syukurlah pengguna \verb=Emacs=, Anda 
+tidak perlu untuk memasang \emph{client} tersendiri, karena \verb=Emacs= 
+sudah memasukkan program untuk itu, namanya \verb=erc=.
+
+Anda dapat mengaktifkan \verb=erc= dengan cara:
+
+\begin{verbatim}
+M-x erc
+\end{verbatim}
+
+Selanjutnya tinggal ikuti langkah-langkah seperti Anda menggunakan program
+\emph{irc client} lainnya. Untuk dapat bergabung dalam komunitas
+ini Anda harus memiliki \emph{id} yang sudah teregistrasi pada 
+\verb=NickServ=, jika tidak Anda akan di-\emph{redirect} ke ruang
+\verb=#python-unregistered=.
+
+Selamat mencoba!
+
+\subsection{Dari org ke tex dan PDF}
+Pada bahasan di atas sempat disinggung bagaimana mengubah dokumen \verb=Org=
+ke dalam format \verb=HTML=. Ketika Anda menekan tombol \verb=C-cC-e= 
+kalau Anda perhatikan banyak sekali jenis dokumen yang didukung 
+oleh \verb=emacs=. Salah satu favorit saya adalah format \verb=tex=. 
+Anda dapat langsung memilih format \verb=PDF= atau \verb=tex= saja. 
+Kalau ingin praktis, format \verb=PDF= mungkin jadi pilihan, tapi kalau 
+ingin lebih fleksibel, format \verb=tex= tentu tidak ada tandingan.
+
+Kenapa fleksibel? Karena jika menggunakan format langsung ke \verb=PDF=,
+semuanya serba otomatis, mulai dari judul dokumen yang menggunakan nama
+berkas, tanggal, warna halaman isi, pengarang, jenis \emph{font}, dan 
+masih banyak lagi. Berdasarkan pengalaman, hasil konversi ke \verb=PDF=
+ini kurang begitu bagus.
+
+Oleh karena itu penulis lebih memilih mengubah dokumen \verb=org= ke dalam
+dokumen \verb=tex=, baru setelah itu kita ubah secara manual menggunakan
+\emph{engine} \verb=pdflatex=.
+
+Bagaimana caranya? Untuk ekspor dokumen, seperti sudah dibahas pada bagian
+sebelumnya, tekan \verb=C-cC-e= kemudian tekan \verb=l= untuk format 
+\verb=tex=. Setelah itu silakan sunting seperlunya, kalau penulis biasanya
+menghilangkan ukuran huruf yang secara \emph{default} ditetapkan 11pt,
+kemudian menonaktifkan paket \verb=fontenc= agar tampilan huruf terlihat
+lebih halus.
+
+\begin{verbatim}
+|-------------------------------+---------------------------|
+| Dari                          | Menjadi                   |
+|-------------------------------+---------------------------|
+| \documentclass[11pt]{article} | \documentclass{article}   |
+| \usepackage[T1]{fontenc}      | %\usepackage[T1]{fontenc} |
+|-------------------------------+---------------------------|
+\end{verbatim}
+
+Jika sudah, sekarang saatnya mengubah dari format \verb=tex= menjadi
+\verb=PDF= dengan menekan tombol \verb=C-cC-c= kemudian tekan \emph{Enter}.
+Dalam sekejap \verb=emacs= membuat berkas baru dengan ekstensi \verb=PDF= pada
+direktori yang sama dengan direktori tempat berkas \verb=tex= berada.
+
+Untuk melihat hasil, Anda dapat menekan tombol \verb=C-cC-c= sekali lagi, 
+dan perhatikan layar \verb=emacs= Anda berubah menjadi \emph{pdf viewer}. Atau
+Anda dapat juga menggunakan aplikasi eksternal untuk membuka berkas \verb=PDF=
+tersebut.
+
+\subsection{Memanggil Menubar pada emacs-nox}
+Jika Anda bekerja dengan mode GUI, tentu tidak jadi soal, karena Anda dapat
+memanggil/membuka menubar menggunakan perangkat tetikus Anda, tapi jika
+Anda bekerja pada emacs-nox, bagaimana cara memanggil menubar? 
+
+Ternyata caranya cukup mudah, hanya dengan menekan tombol \verb=F10= saja.
+
+\begin{verbatim}
+|----------+-------------------------------------------|
+| Perintah | Keterangan                                |
+|----------+-------------------------------------------|
+| F10      | Memanggil / Membuka Menubar pada mode nox |
+|----------+-------------------------------------------|
+\end{verbatim}
+
+\subsection{Import Tabel HTML kedalam Org-Mode}
+Untuk mengimport html table ke dalam orgmode, salin dan tempel tabelnya dulu, kemudian tekan 
+\verb=C-c |=
+
+\subsection{Access Command Line Manual (man)}
+Misal Anda ingin mengetahui manual untuk perintah ls, tanpa harus keluar dari
+emacs Anda dapat membacanya dengan:
+
+\begin{verbatim}
+|--------------+-----------------------|
+| Perintah     | Keterangan            |
+|--------------+-----------------------|
+| M-x man      | Mengaktifkan menu man |
+| command-line | misal, ls, tr, dll.   |
+|--------------+-----------------------|
+\end{verbatim}
+
+\subsection{Access Info Mode}
+\emph{Info-mode} tidak lain adalah sumber informasi untuk emacs sekaligus beberapa topik yang masih berkaitan, khususnya terkait dengan sistem operasi Unix 
+(CMIIW), sangat disarankan untuk dibaca, baik bagi Anda yang baru mencoba 
+sistem operasi emacs dan Unix (atau turunannya) maupun Anda yang sehari-hari 
+sudah bergelut dengan emacs/Unix.
+
+\begin{verbatim}
+|----------+-----------------------------|
+| Perintah | Keterangan                  |
+|----------+-----------------------------|
+| M-x info | Mengakses dokumentasi info  |
+|----------+-----------------------------|
+\end{verbatim}
+
+Untuk melakukan navigasi pada mode ini, Anda dapat menekan tombol \verb=F10=
+kemudian tekan \verb=i= untuk \emph{info}, dari sini Anda dapat memilih
+navigasi yang Anda inginkan (\emph{up, next}, dll.)
+
+atau gunakan \emph{shortkey} berikut:
+
+\begin{verbatim}
+|----------+------------------|
+| Perintah | Keterangan       |
+|----------+------------------|
+| h        | memunculkan help |
+| u        | up               |
+| n        | next             |
+| p        | previous         |
+| Ret      | jump into link   |
+|----------+------------------|
+\end{verbatim}
+
+\subsection{Melakukan Kustomisasi}
+Salah satu kelebihan emacs adalah pada ekstensibilitas yang
+dimilikinya. Pengguna dapat dengan mudah melakukan kustomisasi dengan
+mengaktifkan mode customization (\verb=M-x customize=) dan melakukan
+pencarian pada kotak pencarian yang disediakan.
+
+Sebagai contoh kita ingin melakukan kustomisasi terhadap
+\verb=ido-mode=, maka cari ido-mode, kemudian ubah pengaturan dari
+sana. Setelah itu kita dapat menyimpan pengaturan dengan memilih
+tautan state, dan pilih model penyimpanan, apakah hanya untuk sesi
+sekarang, atau disimpan untuk sesi-sesi yang akan datang, jika pilihan
+kedua, maka emacs akan secara otomatis menyunting berkas \verb=.emacs=
+pada direktori home Anda.
+
+\subsection{Merapikan Baris}
+Untuk membuat kegiatan sunting-menyunting berkas dengan \verb=emacs=
+lebih rapi dan enak dilihat, saya biasa membatasi panjang setiap baris
+maksimal 78 karakter, biar tampilan emacs menjadi rapi dan tidak terlalu
+lebar.
+
+Caranya mudah, cukup menekan \verb=M-q=, dan otomatis baris yang panjang
+akan terpotong sesuai dengan pengaturan yang Anda tetapkan (secara 
+\emph{default} maksimal 78 karakter.
+
+
+\subsection{Lain-lain}
+
+\begin{verbatim}
+|--------------------------------+---------------------------------------------|
+| Perintah                       | Keterangan                                  |
+|--------------------------------+---------------------------------------------|
+| M-\                            | remove whitespace before and after cursor   |
+|                                | and after cursor                            |
+| M-^                            | join the line with previous line            |
+|                                | and fix white space                         |
+| M-x delete-trailing-whitespace | removes blanks after last char on all lines |
+|--------------------------------+---------------------------------------------|
+\end{verbatim}
+
+\section{Version History}
+Bagian ini merupakan \emph{log} dari perubahan-perubahan yang ada pada buku
+kecil ini.
+
+\begin{verbatim}
+|------------------+-------+-----------------------------------|
+| Tanggal          | Versi | Keterangan                        |
+|------------------+-------+-----------------------------------|
+| 17 Januari 2013  |   0.1 | Versi pertama                     |
+| 25 April 2013    |   0.2 | Versi kedua, menambahkan beberapa |
+|                  |       | subsection baru, seperti konversi |
+|                  |       | dari org ke tex kemudian ke pdf   |
+|------------------+-------+-----------------------------------|
+\end{verbatim}
+
+\end{document}
