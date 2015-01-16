@@ -60,3 +60,36 @@
 (global-set-key (kbd "C-;") 'comment-or-uncomment-region)
 (global-set-key (kbd "M-/") 'hippie-expand)
 (global-set-key (kbd "C-x g") 'magit-status)
+
+;------------------------------;
+;;; org-html-publisher setup ;;;
+;------------------------------;
+
+(require 'org-publish)
+(setq org-publish-project-alist
+      '(
+
+       ;; ... add all the components here (see below)...
+
+	("org-notes"
+	 :base-directory "~/org/"
+	 :base-extension "org"
+	 :publishing-directory "~/public_html/"
+	 :recursive t
+	 :publishing-function org-publish-org-to-html
+	 :headline-levels 2             ; Just the default for this project.
+	 :auto-preamble t
+	 )
+
+	("org-static"
+	 :base-directory "~/org/"
+	 :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+	 :publishing-directory "~/public_html/"
+	 :recursive t
+	 :publishing-function org-publish-attachment
+	 )
+
+	("org" :components ("org-notes" "org-static"))
+
+	)
+)
