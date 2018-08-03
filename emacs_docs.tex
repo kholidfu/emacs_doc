@@ -2,6 +2,7 @@
 
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{fontawesome}
 \hypersetup{
     colorlinks,
     citecolor=blue,
@@ -18,7 +19,7 @@
 \renewcommand{\l@subsubsection}{\@dottedtocline{3}{4.4em}{4.0em}}
 \makeatother
 
-\title{Tutorial Emacs}
+\title{Tutorial Emacs Bahasa Indonesia}
 \author{
   @kholidfu\footnote{\url{http://twitter.com/kholidfu}}\\
   \footnotesize{\url{https://github.com/kholidfu/emacs\_doc}}
@@ -34,29 +35,13 @@
 \section{Pendahuluan}
 Dari sekian banyak aplikasi penyunting teks 'jadul' di keluarga
 Unix adalah \verb=emacs=. Sama halnya dengan \verb=Vim=, penyunting
-teks satu ini juga memiliki penggemar tersendiri, yang kadang
+teks satu ini juga memiliki penggemar tersendiri (baca: \emph{fanbase} \faSmileO), yang kadang
 karena kefanatikannya sampai terjadi \emph{war} antara \verb=emacs=
 vs \verb=Vim=. Pertanyaan yang sering muncul adalah ``apakah
 \verb=emacs= dapat melakukan ini, apakah \verb=Vim= memiliki fitur
 ini?`` Dalam artikel ini, penulis tidak mau terjebak dalam 
 \emph{war} tersebut, melainkan sekedar menuliskan pengalaman 
 menggunakan \verb=emacs=, dari kacamata seorang awam.
-
-Berikut ini adalah tampilan awal (default) emacs:
-
-\vspace{12pt}
-
-\includegraphics[scale=0.45]{images/emacs1.png} 
-
-\vspace{12pt}
-
-Dan berikut ini tampilan awal emacs yang sudah saya custom:
-
-\vspace{12pt}
-
-\includegraphics[scale=0.5]{images/emacs2.png} 
-
-\vspace{12pt}
 
 Salah satu alasan saya belajar \verb=emacs= adalah kenyataan
 bahwa beberapa \emph{key bindings} pada program di *Nix 
@@ -127,6 +112,36 @@ Guy L. Steele pada tahun 1976.
 \verb=Emacs= sendiri memiliki banyak \emph{variant}, dan saat ini
 \emph{variant} yang paling banyak dipakai adalah \verb=GNU Emacs=
 yang dibuat oleh Stallman untuk \emph{GNU Project}.
+
+Berikut adalah tampilan default emacs\footnote{GNU Emacs 25.2.2}.
+
+\vspace{12pt}
+
+\includegraphics[scale=0.45]{images/emacs1.png} 
+
+\vspace{12pt}
+
+
+Anda juga dapat menjalankan emacs dalam mode text-mode (non-GUI) 
+dengan menambahkan parameter \verb=-nw=.
+
+\begin{verbatim}
+$ emacs -nw
+\end{verbatim}
+
+\vspace{12pt}
+
+\includegraphics[scale=0.5]{images/emacs-nox.png} 
+
+\vspace{12pt}
+
+Dan berikut ini tampilan awal emacs yang sudah saya custom (GUI):
+
+\vspace{12pt}
+
+\includegraphics[scale=0.45]{images/emacs2.png} 
+
+\vspace{12pt}
 
 \section{Bekerja dengan Berkas}
 Berikut perintah ketika bekerja dengan berkas:
@@ -2272,7 +2287,7 @@ akan terpotong sesuai dengan pengaturan yang Anda tetapkan (secara
 Dalam github ini juga disertakan contoh konfigurasi berkas
 \texttt{.emacs} yang penulis gunakan.
 
-\url{https://github.com/sopier/emacs\_doc}
+\url{https://github.com/kholidfu/emacs\_doc}
 
 \section{Version History}
 Bagian ini merupakan \emph{log} dari perubahan-perubahan yang ada pada buku
