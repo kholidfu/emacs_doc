@@ -1405,7 +1405,41 @@ Perhatikan bahwa paket markdown sudah terpasang di emacs saya.
 Pada sesi berikutnya kita akan belajar menambahkan paket di emacs.
 
 \subsection{Menambahkan/Install Packages}
+
+Untuk memasang paket baru, caranya adalah sebagai berikut:
+
+\begin{verbatim}
+Mx-package-list-packages
+\end{verbatim}
+
+\includegraphics[scale=.5]{images/emacs_install_from_repo1.png} 
+
+Tekan enter, kemudian cari paket yang Anda inginkan dengan 
+menggunakan \verb=C-s=, misal: \verb=acemode=, setelah ketemu, tekan huruf \verb=i=, kemudian tekan huruf \verb=x=,
+tekan Enter, tunggu beberapa saat, paket akan diunduh dan di-compile
+ke sistem.
+
+\includegraphics[scale=.5]{images/emacs_repo_install_2.png} 
+
+
+\subsection{Menghapus paket}
+Sama seperti langkah di atas, tapi ubah tombol \verb=i= menjadi \verb=d= untuk delete.
+
+\includegraphics[scale=.5]{images/emacs_delete_package.png} 
+
+
 \subsection{Menambahkan Repo Alternatif}
+
+Terkadang paket yang kita inginkan tidak tersedia di repo bawaan,
+untuk itu kita perlu menambah repo lain. Caranya mudah, hanya 
+dengan menambahkan di Emacs config kita (\verb=.emacs=). Contoh
+berikut kita menambahkan repo melpa\footnote{\url{https://melpa.org/}}:
+
+\begin{verbatim}
+;; add melpa repo
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+\end{verbatim}
 
 \section{Menjalankan Shell dari emacs}
 \verb=Emacs= memiliki berbagai macam perintah untuk berinteraksi dengan
