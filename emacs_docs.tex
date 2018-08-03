@@ -42,6 +42,22 @@ ini?`` Dalam artikel ini, penulis tidak mau terjebak dalam
 \emph{war} tersebut, melainkan sekedar menuliskan pengalaman 
 menggunakan \verb=emacs=, dari kacamata seorang awam.
 
+Berikut ini adalah tampilan awal (default) emacs:
+
+\vspace{12pt}
+
+\includegraphics[scale=0.45]{images/emacs1.png} 
+
+\vspace{12pt}
+
+Dan berikut ini tampilan awal emacs yang sudah saya custom:
+
+\vspace{12pt}
+
+\includegraphics[scale=0.5]{images/emacs2.png} 
+
+\vspace{12pt}
+
 Salah satu alasan saya belajar \verb=emacs= adalah kenyataan
 bahwa beberapa \emph{key bindings} pada program di *Nix 
 menggunakan \verb=emacs=, sebagai contoh \verb=Bash=. Untuk
@@ -1339,6 +1355,42 @@ Apabila Anda tertarik dengan \verb=Vim=, penulis juga menyediakan tutorial
 http://dl.dropbox.com/u/5052616/vim_docs.pdf
 \end{verbatim}
 
+\section{Packages dan Repo}
+Seperti halnya sistem operasi, emacs juga memiliki server repo yang 
+berisi paket yang dapat kita tambahkan. Paket ini mirip addons atau 
+plugin. By default, repo emacs dapat kita akses dengan:
+
+\begin{verbatim}
+M-x package-list-packages
+\end{verbatim}
+
+Perhatikan bahwa command ini membutuhkan akses internet dan 
+berikut tampilannya:
+
+\vspace{12pt}
+
+\includegraphics[scale=0.6]{images/repo1.png} 
+
+\vspace{12pt}
+
+kita dapat melakukan search dengan \verb=C-s= seperti biasa. Misal 
+kita ingin mencari paket \verb=markdown=:
+
+\begin{verbatim}
+C-s markdown
+\end{verbatim}
+
+\vspace{12pt}
+
+\includegraphics[scale=0.6]{images/repo_search.png} 
+
+\vspace{12pt}
+
+Perhatikan bahwa paket markdown sudah terpasang di emacs saya. 
+Pada sesi berikutnya kita akan belajar menambahkan paket di emacs.
+
+\subsection{Menambahkan/Install Packages}
+\subsection{Menambahkan Repo Alternatif}
 
 \section{Menjalankan Shell dari emacs}
 \verb=Emacs= memiliki berbagai macam perintah untuk berinteraksi dengan
